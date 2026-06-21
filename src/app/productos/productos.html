@@ -1,0 +1,192 @@
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🛒</div>
+      <div>
+        <div class="brand-nombre">ROJAS MARKET</div>
+        <div class="brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="activo" class="menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Inicio
+      </a>
+      <a routerLink="/productos" routerLinkActive="activo" class="menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        Inventario
+      </a>
+      <a routerLink="/categorias" routerLinkActive="activo" class="menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h7"/>
+        </svg>
+        Proveedores
+      </a>
+      <a routerLink="/ventas" routerLinkActive="activo" class="menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+        POS
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a (click)="cerrarSesion()" class="menu-item cerrar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Cerrar Sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- Contenido -->
+  <main class="contenido">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="busqueda">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" placeholder="Buscar productos, SKUs o categorías..."
+          [(ngModel)]="busqueda" (input)="filtrar()" />
+      </div>
+      <div class="topbar-acciones">
+        <div class="usuario-topbar">
+          <div class="usuario-avatar">{{ nombre.charAt(0) }}</div>
+          <div>
+            <div class="usuario-nombre">{{ nombre }}</div>
+            <div class="usuario-rol">{{ rol }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Encabezado -->
+    <div class="encabezado">
+      <div>
+        <h1>Gestión de Inventario</h1>
+        <p>Control centralizado de existencias y reposición de Rojas Market.</p>
+      </div>
+      <div class="acciones-top">
+        <button class="btn-exportar">↑ Exportar</button>
+        <button class="btn-nuevo" (click)="abrirNuevo()">+ Nuevo Producto</button>
+      </div>
+    </div>
+
+    <!-- Alerta de stock bajo -->
+    <div class="alerta-stock" *ngIf="productos.length > 0">
+      <div class="alerta-icono">⚠️</div>
+      <div class="alerta-texto">
+        <strong>ALERTA DE STOCK</strong>
+        <span>{{ productosFiltrados.length }} Productos en total</span>
+      </div>
+      <button class="btn-revisar">Revisar Críticos</button>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="tabla-container">
+      <div class="tabla-header">
+        <h2>Lista de Productos <span class="badge-total">{{ productosFiltrados.length }} Total</span></h2>
+      </div>
+
+      <div class="cargando" *ngIf="cargando"><p>Cargando productos...</p></div>
+
+      <table *ngIf="!cargando">
+        <thead>
+          <tr>
+            <th>PRODUCTO</th>
+            <th>CATEGORÍA</th>
+            <th>EXISTENCIAS</th>
+            <th>PRECIO UNIT.</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of productosFiltrados">
+            <td>
+              <div class="producto-celda">
+                <div class="producto-icono">📦</div>
+                <div>
+                  <div class="producto-nombre">{{ p.nombre }}</div>
+                  <div class="producto-desc">{{ p.descripcion || 'Sin descripción' }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="tag-categoria">{{ p.categoriaNombre || 'Sin categoría' }}</span>
+            </td>
+            <td>
+              <div class="stock-celda">
+                <span>{{ p.stock }}</span>
+                <div class="stock-barra">
+                  <div class="stock-fill" [class]="getStockClass(p)"
+                    [style.width.%]="p.stockMinimo > 0 ? (p.stock / (p.stockMinimo * 3)) * 100 : 50">
+                  </div>
+                </div>
+                <span [class]="'badge-stock ' + getStockClass(p)">{{ getStockLabel(p) }}</span>
+              </div>
+            </td>
+            <td class="precio">S/ {{ p.precio | number:'1.2-2' }}</td>
+            <td>
+              <div class="acciones">
+                <button class="btn-editar" (click)="abrirEditar(p)">✏️</button>
+                <button class="btn-eliminar" (click)="eliminar(p.id!)">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal nuevo/editar producto -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="mostrarModal = false">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modoEdicion ? 'Editar Producto' : 'Nuevo Producto' }}</h3>
+      <button (click)="mostrarModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="campo">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="productoActual.nombre" placeholder="Nombre del producto" />
+      </div>
+      <div class="campo">
+        <label>Descripción</label>
+        <input type="text" [(ngModel)]="productoActual.descripcion" placeholder="Descripción opcional" />
+      </div>
+      <div class="fila-doble">
+        <div class="campo">
+          <label>Precio (S/)</label>
+          <input type="number" [(ngModel)]="productoActual.precio" placeholder="0.00" />
+        </div>
+        <div class="campo">
+          <label>Stock actual</label>
+          <input type="number" [(ngModel)]="productoActual.stock" placeholder="0" />
+        </div>
+      </div>
+      <div class="campo">
+        <label>Stock mínimo</label>
+        <input type="number" [(ngModel)]="productoActual.stockMinimo" placeholder="0" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="mostrarModal = false">Cancelar</button>
+      <button class="btn-guardar" (click)="guardar()">
+        {{ modoEdicion ? 'Actualizar' : 'Crear Producto' }}
+      </button>
+    </div>
+  </div>
+</div>
