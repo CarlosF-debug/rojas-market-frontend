@@ -1,0 +1,219 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.pagina {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.panel-izquierdo {
+  flex: 1;
+  background: linear-gradient(160deg, #c0392b 0%, #7b0d0d 100%);
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-izquierdo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=800') center/cover;
+  opacity: 0.15;
+}
+
+.badge {
+  position: relative;
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  margin-bottom: 24px;
+  width: fit-content;
+}
+
+.panel-izquierdo h1 {
+  position: relative;
+  font-size: 64px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.panel-izquierdo p {
+  position: relative;
+  color: rgba(255,255,255,0.8);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+.panel-derecho {
+  width: 480px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.formulario {
+  width: 100%;
+  max-width: 380px;
+}
+
+.formulario h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+
+.subtitulo {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+.campo {
+  margin-bottom: 20px;
+}
+
+.campo label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #c0392b;
+  background: white;
+}
+
+.icono { font-size: 16px; margin-right: 8px; }
+
+.icono-ojo {
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 16px;
+}
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 13px 0;
+  font-size: 15px;
+  background: transparent;
+}
+
+.opciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.recordar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+}
+
+.recordar input { width: 14px; height: 14px; }
+
+.olvido {
+  font-size: 13px;
+  color: #c0392b;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.error {
+  background: #fdf0ef;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: #c0392b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 16px;
+}
+
+button:hover:not(:disabled) { background: #a93226; }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.soporte {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.soporte a {
+  color: #c0392b;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.ssl {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.ssl > span { font-size: 28px; }
+
+.ssl div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ssl strong {
+  color: #333;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.ssl div span {
+  color: #888;
+  font-size: 12px;
+}

@@ -1,0 +1,278 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f6fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: #c0392b;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.brand-icon { font-size: 28px; }
+
+.brand-nombre {
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.brand-sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.menu { flex: 1; padding: 12px 0; }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.menu-item:hover {
+  background: rgba(0,0,0,0.15);
+  color: white;
+}
+
+.menu-item.activo {
+  background: rgba(0,0,0,0.2);
+  color: white;
+  border-left: 3px solid white;
+}
+
+.menu-item.cerrar { color: rgba(255,255,255,0.6); }
+
+.sidebar-footer {
+  padding: 8px 0;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Contenido */
+.contenido {
+  margin-left: 200px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+  background: white;
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.busqueda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f6fa;
+  border-radius: 8px;
+  padding: 8px 14px;
+  width: 320px;
+}
+
+.busqueda input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #333;
+  width: 100%;
+}
+
+.topbar-acciones {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-notif {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.btn-notif:hover { background: #f5f6fa; }
+
+.usuario-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.usuario-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #c0392b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.usuario-nombre {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.usuario-rol {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* Encabezado */
+.encabezado {
+  padding: 24px 28px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.encabezado h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.encabezado p { color: #888; font-size: 13px; }
+
+.btn-nuevo {
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-nuevo:hover { background: #219a52; }
+
+/* Tarjetas */
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 0 28px;
+  margin-bottom: 28px;
+}
+
+.tarjeta {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border-top: 3px solid #eee;
+}
+
+.tarjeta.critico { border-top-color: #c0392b; }
+
+.tarjeta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+.tag.rojo { color: #c0392b; }
+.tag.verde { color: #27ae60; }
+
+.tarjeta-label {
+  font-size: 11px;
+  color: #aaa;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.tarjeta-valor {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.tarjeta-valor.rojo { color: #c0392b; }
+
+/* Accesos rápidos */
+.accesos-rapidos {
+  padding: 0 28px;
+}
+
+.accesos-rapidos h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 14px;
+}
+
+.botones { display: flex; gap: 12px; }
+
+.botones button {
+  padding: 10px 18px;
+  background: #c0392b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.botones button:hover { background: #a93226; }
+
+.cargando {
+  text-align: center;
+  color: #888;
+  padding: 40px;
+}

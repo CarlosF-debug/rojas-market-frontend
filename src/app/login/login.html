@@ -1,0 +1,98 @@
+<!-- Página de login dividida en dos paneles -->
+<div class="pagina">
+
+  <!-- Panel izquierdo: imagen de marca -->
+  <div class="panel-izquierdo">
+    <div class="badge">Sistema de Inventario</div>
+    <h1>Rojas<br>Market</h1>
+    <p>Gestione su inventario, ventas y proveedores con la precisión de un sistema diseñado para la excelencia operativa.</p>
+  </div>
+
+  <!-- Panel derecho: formulario de autenticación -->
+  <div class="panel-derecho">
+    <div class="formulario">
+
+      <h2>Bienvenido de nuevo</h2>
+      <p class="subtitulo">Ingrese sus credenciales para acceder al panel.</p>
+
+      <!-- Campo correo -->
+      <div class="campo">
+        <label>Usuario</label>
+        <div class="input-wrapper">
+          <span class="icono">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <input
+            type="email"
+            [(ngModel)]="correo"
+            placeholder="nombre.apellido"
+            (keyup.enter)="ingresar()"
+          />
+        </div>
+      </div>
+
+      <!-- Campo contraseña con toggle de visibilidad -->
+      <div class="campo">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <span class="icono">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <input
+            [type]="mostrarPassword ? 'text' : 'password'"
+            [(ngModel)]="contrasena"
+            placeholder="••••••••••••"
+            (keyup.enter)="ingresar()"
+          />
+          <span class="icono-ojo" (click)="mostrarPassword = !mostrarPassword">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Opciones adicionales -->
+      <div class="opciones">
+        <label class="recordar">
+          <input type="checkbox" [(ngModel)]="recordar" />
+          <span>Recordar sesión</span>
+        </label>
+        <a href="#" class="olvido">¿Olvidó su contraseña?</a>
+      </div>
+
+      <!-- Mensaje de error -->
+      <div class="error" *ngIf="error">⚠️ {{ error }}</div>
+
+      <!-- Botón de ingreso -->
+      <button (click)="ingresar()" [disabled]="cargando">
+        {{ cargando ? 'Ingresando...' : 'Iniciar Sesión →' }}
+      </button>
+
+      <p class="soporte">¿Necesita ayuda? Contacte con <a href="#">Soporte Técnico</a></p>
+
+      <!-- Indicador de seguridad -->
+      <div class="ssl">
+        <span>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <div>
+          <strong>SERVIDOR SEGURO</strong>
+          <span>Conexión Encriptada SSL</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
