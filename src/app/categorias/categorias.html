@@ -1,67 +1,126 @@
-<<div class="login-container">
-    
-    <!-- Sección Izquierda: Banner Corporativo -->
-    <div class="login-left">
-        <div class="bg-red-overlay"></div>
-        <div class="left-content">
-            <span class="badge-inventario">Sistema de Inventario</span>
-            <h1>Rojas<br/>Market</h1>
-            <p>Gestione su inventario, ventas y proveedores con la precisión de un sistema diseñado para la excelencia operativa.</p>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Rojas Market - POS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Manrope', 'sans-serif'] },
+                    colors: {
+                        primary: '#D32F2F',       /* Rojo principal */
+                        'primary-dark': '#8B0000',/* Rojo oscuro textos */
+                        surface: '#FEF2F0',       /* Fondo rosado claro central */
+                        'surface-white': '#FFFFFF',
+                        'ticket-bg': '#FEF2F0',
+                        text: '#410001',
+                        green: '#4CAF50'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e4beba; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-text flex h-screen overflow-hidden antialiased">
 
-    <!-- Sección Derecha: Formulario de Login -->
-    <div class="login-right">
-        <div class="form-wrapper">
+    <aside class="w-[240px] bg-surface-white border-r border-red-100 flex flex-col z-20 flex-shrink-0">
+        <div class="px-6 py-8">
+            <h1 class="text-2xl text-primary-dark font-extrabold tracking-tight">Rojas Market</h1>
+            <p class="text-xs text-gray-500 mt-1">Station 01</p>
+        </div>
+
+        <nav class="flex-grow flex flex-col space-y-1">
+            <a href="#" class="flex items-center gap-3 bg-primary text-white px-6 py-3 font-bold text-sm">
+                <span class="material-symbols-outlined icon-fill">grid_view</span> Catalog
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-600 px-6 py-3 font-semibold text-sm hover:bg-red-50">
+                <span class="material-symbols-outlined">bolt</span> Quick Select
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-600 px-6 py-3 font-semibold text-sm hover:bg-red-50">
+                <span class="material-symbols-outlined">receipt_long</span> Recent Sales
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-600 px-6 py-3 font-semibold text-sm hover:bg-red-50">
+                <span class="material-symbols-outlined">group</span> Customers
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-600 px-6 py-3 font-semibold text-sm hover:bg-red-50 mt-4">
+                <span class="material-symbols-outlined">help_outline</span> Support
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto">
+            <div class="bg-surface rounded-xl p-3 flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" class="w-full h-full object-cover" alt="User">
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-primary-dark">Cajero 01</p>
+                    <p class="text-[9px] uppercase font-bold text-primary">En turno</p>
+                </div>
+            </div>
+            <a href="#" class="flex items-center gap-3 text-gray-600 px-2 py-2 font-semibold text-sm hover:text-primary">
+                <span class="material-symbols-outlined">logout</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-grow flex flex-col h-screen">
+        
+        <header class="flex justify-between items-center px-8 h-16 bg-surface-white border-b border-red-100 flex-shrink-0">
+            <div class="flex items-center gap-8">
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 text-sm">search</span>
+                    <input type="text" placeholder="Buscar productos..." class="pl-9 pr-4 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none w-64 text-sm">
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="#" class="text-primary font-bold border-b-2 border-primary pb-[18px] translate-y-[9px] text-sm">Inventory</a>
+                    <a href="#" class="text-gray-500 hover:text-primary text-sm font-semibold">Sales</a>
+                    <a href="#" class="text-gray-500 hover:text-primary text-sm font-semibold">Reports</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4 text-gray-500">
+                <span class="material-symbols-outlined cursor-pointer hover:text-primary text-[22px]">notifications</span>
+                <span class="material-symbols-outlined cursor-pointer hover:text-primary text-[22px]">settings</span>
+                <span class="material-symbols-outlined cursor-pointer hover:text-primary text-[22px]">person</span>
+            </div>
+        </header>
+
+        <div class="flex-grow flex overflow-hidden">
             
-            <div class="form-header">
-                <h2>Bienvenido de nuevo</h2>
-                <p>Ingrese sus credenciales para acceder al panel.</p>
-            </div>
-
-            <form action="#" method="POST">
+            <section class="flex-grow p-8 overflow-y-auto">
+                <h2 class="text-3xl font-extrabold text-primary-dark mb-6">Catálogo de Productos</h2>
                 
-                <div class="input-group">
-                    <label for="username">Usuario</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-outlined icon-left">person</span>
-                        <input type="text" id="username" placeholder="nombre.apellido">
+                <div class="flex gap-3 mb-8">
+                    <button class="px-5 py-1.5 rounded-full bg-primary text-white text-sm font-bold shadow-sm">Todos</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 text-sm font-bold hover:border-primary">Lácteos</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 text-sm font-bold hover:border-primary">Abarrotes</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 text-sm font-bold hover:border-primary">Limpieza</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 text-sm font-bold hover:border-primary">Bebidas</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-red-50 relative cursor-pointer hover:shadow-md transition-shadow">
+                        <span class="absolute top-4 right-4 bg-primary text-white px-2 py-0.5 rounded text-[10px] font-bold z-10">LÁCTEOS</span>
+                        <div class="h-40 bg-[#E8F3F6] rounded-lg mb-3 flex items-center justify-center p-4">
+                            <img src="https://pepsicobs.vtexassets.com/arquivos/ids/155452/Leche-Evaporada-Gloria-Caja-400-Gr.png" alt="Leche" class="h-full object-contain">
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-800">Leche Gloria 400g</h4>
+                        <div class="flex justify-between items-end mt-2">
+                            <p class="text-primary-dark font-extrabold text-2xl">S/ <br/>4.50</p>
+                            <span class="text-[10px] text-gray-400 font-bold text-right leading-tight">45 en<br/>stock</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label for="password">Contraseña</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-outlined icon-left">lock</span>
-                        <input type="password" id="password" placeholder="••••••••••••">
-                        <span class="material-symbols-outlined icon-right">visibility</span>
-                    </div>
-                </div>
-
-                <div class="form-options">
-                    <label class="remember-me">
-                        <input type="checkbox" id="remember-me"> Recordar sesión
-                    </label>
-                    <a href="#" class="forgot-password">¿Olvidó su contraseña?</a>
-                </div>
-
-                <button type="submit" class="btn-primary">
-                    Iniciar Sesión <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            </form>
-
-            <p class="support-text">
-                ¿Necesita ayuda? Contacte con <a href="#">Soporte Técnico</a>
-            </p>
-
-            <div class="secure-badge">
-                <span class="material-symbols-outlined badge-icon">lock</span>
-                <div class="badge-text">
-                    <h4>Servidor Seguro</h4>
-                    <p>Conexión Encriptada SSL</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-red-50 relative cursor-pointer hover:shadow
