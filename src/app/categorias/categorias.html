@@ -1,69 +1,79 @@
 <div class="pagina-pos">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="brand">
-      <h1>Rojas Market</h1>
-      <p>Station 01</p>
-    </div>
 
-    <nav class="navegacion">
-      <a href="#" class="nav-item activo">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-        Catálogo
-      </a>
-      <a href="#" class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Selección Rápida
-      </a>
-      <a href="#" class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Ventas Recientes
-      </a>
-      <a href="#" class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Clientes
-      </a>
-    </nav>
+    <div>
+      <div class="brand">
+        <h1>ROJAS MARKET</h1>
+        <p>STATION 01</p>
+      </div>
+
+      <nav class="navegacion">
+        <a class="nav-item activo">
+          Catálogo
+        </a>
+
+        <a class="nav-item">
+          Selección Rápida
+        </a>
+
+        <a class="nav-item">
+          Ventas Recientes
+        </a>
+
+        <a class="nav-item">
+          Clientes
+        </a>
+      </nav>
+    </div>
 
     <div class="usuario-footer">
       <div class="perfil">
-        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" alt="Cajero">
+        <img src="https://i.pravatar.cc/100" alt="usuario">
         <div class="info">
           <strong>Cajero 01</strong>
           <span>EN TURNO</span>
         </div>
       </div>
-      <a href="#" class="logout">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+
+      <a class="logout">
         Cerrar Sesión
       </a>
     </div>
+
   </aside>
 
+  <!-- MAIN -->
   <main class="contenido-central">
-    
+
+    <!-- TOPBAR -->
     <header class="topbar">
+
       <div class="topbar-izq">
-        <div class="input-wrapper buscador">
-          <span class="icono">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </span>
+
+        <div class="input-wrapper">
           <input type="text" placeholder="Buscar productos...">
         </div>
-        
+
         <div class="menu-superior">
-          <a href="#" class="activo">Inventario</a>
-          <a href="#">Ventas</a>
-          <a href="#">Reportes</a>
+          <a class="activo">Inventario</a>
+          <a>Ventas</a>
+          <a>Reportes</a>
         </div>
+
       </div>
+
     </header>
 
+    <!-- CONTENT -->
     <div class="area-trabajo">
-      
+
+      <!-- PRODUCTOS -->
       <section class="catalogo">
+
         <h2>Catálogo de Productos</h2>
-        
+
         <div class="filtros">
           <button class="filtro activo">Todos</button>
           <button class="filtro">Lácteos</button>
@@ -73,81 +83,92 @@
         </div>
 
         <div class="grid-productos">
-          
+
           <div class="tarjeta-producto">
-            <span class="badge-tag" style="background:#c0392b;">LÁCTEOS</span>
+            <span class="badge-tag" style="background:#c73a2b">LÁCTEOS</span>
+
             <div class="img-wrapper">
-              <img src="https://pepsicobs.vtexassets.com/arquivos/ids/155452/Leche-Evaporada-Gloria-Caja-400-Gr.png" alt="Leche Gloria">
+              <img src="https://plazavea.vteximg.com.br/arquivos/ids/28551469-512-512/20120516.jpg">
             </div>
+
             <h4>Leche Gloria 400g</h4>
+
             <div class="precio-stock">
-              <div class="precio">S/ <span>4.50</span></div>
-              <div class="stock">45 en<br>stock</div>
+              <div class="precio">S/ 4.50</div>
+              <div class="stock">45 en stock</div>
             </div>
           </div>
 
           <div class="tarjeta-producto">
-            <span class="badge-tag" style="background:#d35400;">ABARROTES</span>
+            <span class="badge-tag" style="background:#d35400">ABARROTES</span>
+
             <div class="img-wrapper">
-              <img src="https://plazavea.vteximg.com.br/arquivos/ids/28551469-512-512/20120516.jpg" alt="Arroz">
+              <img src="https://contents.mediadecathlon.com/p2578131/k$6dfb59555e54f145347daee12270f7aa/zapatillas-de-running-jogflow-100-1.jpg">
             </div>
+
             <h4>Arroz Extra 1kg</h4>
+
             <div class="precio-stock">
-              <div class="precio">S/ <span>3.80</span></div>
-              <div class="stock">120 en<br>stock</div>
+              <div class="precio">S/ 3.80</div>
+              <div class="stock">120 en stock</div>
             </div>
           </div>
 
           <div class="tarjeta-producto">
-            <span class="badge-tag" style="background:#2980b9;">BEBIDAS</span>
+            <span class="badge-tag" style="background:#2980b9">BEBIDAS</span>
+
             <div class="img-wrapper">
-              <img src="https://licoreriasunidas.pe/wp-content/uploads/2021/04/Inca-kola-2.25L.png" alt="Inca Kola">
+              <img src="https://licoreriasunidas.pe/wp-content/uploads/2021/04/Inca-kola-2.25L.png">
             </div>
+
             <h4>Inca Kola 2.5L</h4>
+
             <div class="precio-stock">
-              <div class="precio">S/ <span>9.50</span></div>
-              <div class="stock">15 en<br>stock</div>
+              <div class="precio">S/ 9.50</div>
+              <div class="stock">15 en stock</div>
             </div>
           </div>
 
           <div class="tarjeta-producto">
-            <span class="badge-tag" style="background:#16a085;">LIMPIEZA</span>
+            <span class="badge-tag" style="background:#16a085">LIMPIEZA</span>
+
             <div class="img-wrapper">
-               <div class="placeholder-img" style="background:#1abc9c;"></div>
+              <img src="https://plazavea.vteximg.com.br/arquivos/ids/177276-1000-1000/20109687.jpg">
             </div>
+
             <h4>Detergente Líquido</h4>
+
             <div class="precio-stock">
-              <div class="precio">S/ <span>12.00</span></div>
-              <div class="stock" style="color:#c0392b;">2 en<br>stock</div>
+              <div class="precio">S/ 12.00</div>
+              <div class="stock" style="color:red;">2 en stock</div>
             </div>
           </div>
 
         </div>
+
       </section>
 
+      <!-- TICKET -->
       <section class="ticket-panel">
-        
+
         <div class="ticket-header">
-          <h3>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            Ticket
-          </h3>
-          <button class="btn-basura">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          </button>
+          <h3>🛒 Ticket</h3>
         </div>
 
         <div class="ticket-items">
+
           <div class="item-fila">
             <div class="item-info">
               <p>Leche Gloria</p>
               <span>S/ 4.50 / u</span>
             </div>
+
             <div class="item-controles">
               <span class="badge-mini">Todos</span>
               <strong>2</strong>
               <button class="btn-mas">+</button>
             </div>
+
             <div class="item-total">S/ 9.00</div>
           </div>
 
@@ -156,47 +177,50 @@
               <p>Agua San Mateo</p>
               <span>S/ 2.00 / u</span>
             </div>
+
             <div class="item-controles">
               <span class="badge-mini">Todos</span>
               <strong>1</strong>
               <button class="btn-mas">+</button>
             </div>
+
             <div class="item-total">S/ 2.00</div>
           </div>
+
         </div>
 
         <div class="ticket-resumen">
+
           <div class="fila-resumen">
-            <span>Subtotal</span><span>S/ 9.32</span>
+            <span>Subtotal</span>
+            <span>S/ 9.32</span>
           </div>
+
           <div class="fila-resumen">
-            <span>IGV (18%)</span><span>S/ 1.68</span>
+            <span>IGV (18%)</span>
+            <span>S/ 1.68</span>
           </div>
+
           <div class="fila-total">
             <span>TOTAL</span>
             <span class="monto">S/ 11.00</span>
           </div>
 
           <div class="metodos-pago">
-            <button class="btn-metodo">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
-              EFECTIVO
-            </button>
-            <button class="btn-metodo activo">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              TARJETA/QR
-            </button>
+            <button class="btn-metodo">EFECTIVO</button>
+            <button class="btn-metodo activo">TARJETA/QR</button>
           </div>
 
           <button class="btn-cobrar">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             COBRAR
           </button>
+
         </div>
 
       </section>
 
     </div>
+
   </main>
 
 </div>
