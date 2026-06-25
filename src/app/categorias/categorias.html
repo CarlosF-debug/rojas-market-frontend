@@ -1,301 +1,67 @@
-<!DOCTYPE html>
+<<div class="login-container">
+    
+    <!-- Sección Izquierda: Banner Corporativo -->
+    <div class="login-left">
+        <div class="bg-red-overlay"></div>
+        <div class="left-content">
+            <span class="badge-inventario">Sistema de Inventario</span>
+            <h1>Rojas<br/>Market</h1>
+            <p>Gestione su inventario, ventas y proveedores con la precisión de un sistema diseñado para la excelencia operativa.</p>
+        </div>
+    </div>
 
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Rojas Market - Punto de Venta</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@100..900&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"tertiary-container": "#00799c", background: "#fff8f7", "on-error": "#ffffff", "error-container": "#ffdad6", "primary-fixed": "#ffdad6", "surface-container": "#ffe9e6", surface: "#fff8f7", "primary-container": "#d32f2f", primary: "#af101a", "surface-variant": "#ffdad5", "primary-fixed-dim": "#ffb3ac", "outline-variant": "#e4beba", "on-secondary": "#ffffff", "inverse-on-surface": "#ffedea", "surface-dim": "#ffcfc8", "on-tertiary-fixed-variant": "#004d65", "secondary-fixed-dim": "#c8c6c6", "surface-tint": "#ba1a20", "surface-bright": "#fff8f7", "surface-container-highest": "#ffdad5", "on-tertiary-fixed": "#001f2a", "tertiary-fixed": "#bee9ff", "on-tertiary-container": "#e9f7ff", "surface-container-high": "#ffe2de", "secondary-container": "#e4e2e1", "on-surface-variant": "#5b403d", "on-primary-fixed-variant": "#930010", "on-primary": "#ffffff", "secondary-fixed": "#e4e2e1", "on-tertiary": "#ffffff", "on-primary-container": "#fff2f0", tertiary: "#005f7b", "on-secondary-fixed-variant": "#474747", "surface-container-lowest": "#ffffff", "on-background": "#410001", "inverse-surface": "#690003", "on-error-container": "#93000a", "tertiary-fixed-dim": "#7bd1f8", "on-secondary-container": "#656464", "on-secondary-fixed": "#1b1c1c", error: "#ba1a1a", "on-primary-fixed": "#410003", secondary: "#5f5e5e", "surface-container-low": "#fff0ee", outline: "#8f6f6c", "inverse-primary": "#ffb3ac", "on-surface": "#410001"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {xs: "4px", "container-max": "1440px", sm: "8px", base: "8px", xxl: "48px", xl: "32px", gutter: "24px", lg: "24px", md: "16px"}, fontFamily: {"label-caps": ["Manrope"], button: ["Manrope"], "body-md": ["Manrope"], h2: ["Manrope"], "body-sm": ["Manrope"], h1: ["Manrope"], "body-lg": ["Manrope"], h3: ["Manrope"], headline: ["Manrope"], display: ["Manrope"], body: ["Manrope"], label: ["Manrope"]}, fontSize: {"label-caps": ["12px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "700"}], button: ["14px", {lineHeight: "16px", fontWeight: "600"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], h2: ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "700"}], "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}], h1: ["40px", {lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], h3: ["24px", {lineHeight: "32px", fontWeight: "600"}]}}}};</script>
-<style>
-        body { font-family: 'Manrope', sans-serif; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .active-nav-indicator {
-            position: absolute;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background-color: #af101a;
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #af101a; }
-    </style>
-</head>
-<body class="bg-surface text-on-surface flex h-screen overflow-hidden">
-<!-- SideNavBar (Shared Component) -->
-<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container-lowest border-r border-surface-variant flex flex-col py-xl z-20">
-<div class="px-lg mb-xxl">
-<h1 class="font-h3 text-h3 text-primary font-extrabold tracking-tight">Rojas Market</h1>
-<p class="font-body-sm text-body-sm text-secondary">Station 01</p>
-</div>
-<nav class="flex-grow flex flex-col">
-<a class="flex items-center gap-md bg-primary-container text-on-primary-container border-l-4 border-primary px-lg py-md transition-all font-label-caps text-label-caps group" href="#">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grid_view</span>
-                Catalog
-            </a>
-<a class="flex items-center gap-md text-secondary px-lg py-md hover:bg-surface-container transition-all font-label-caps text-label-caps group" href="#">
-<span class="material-symbols-outlined">bolt</span>
-                Quick Select
-            </a>
-<a class="flex items-center gap-md text-secondary px-lg py-md hover:bg-surface-container transition-all font-label-caps text-label-caps group" href="#">
-<span class="material-symbols-outlined">receipt_long</span>
-                Recent Sales
-            </a>
-<a class="flex items-center gap-md text-secondary px-lg py-md hover:bg-surface-container transition-all font-label-caps text-label-caps group" href="#">
-<span class="material-symbols-outlined">group</span>
-                Customers
-            </a>
-<a class="flex items-center gap-md text-secondary px-lg py-md hover:bg-surface-container transition-all font-label-caps text-label-caps group" href="#">
-<span class="material-symbols-outlined">help_outline</span>
-                Support
-            </a>
-</nav>
-<div class="mt-auto px-lg">
-<div class="flex items-center gap-md mb-xl p-md rounded-lg bg-surface-container-low border border-surface-variant">
-<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A portrait of a professional supermarket cashier wearing a clean corporate uniform. The photo is high-quality, professional headshot style, with soft indoor lighting typical of a modern retail environment. The mood is friendly and efficient, fitting a corporate modern UI with a clean background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARuT2CVJQWjyNZn_oFjkQTKZFFax-YF_CvdmyWw8As-g4TYPUpO0YhNbTHdeT6iORZo0yi1tdYfbmuO-uvDOG5md6HlT7gB972KLwYz9nyrO4SP2JSy9ZjC2lBvn2WNR-kQD60QXT3pYvicEWOMWamzW_q1rfIdiAoybBAWGccef1zMn08r6fq4ew5yVIPjNTwOJa-t4SlQxUjKqOVK-jwJi-fh9MmKMj1zaYho_8JnlbG7B1PSgwjnOjNFgSxfeu2tXzSo36H_mH4"/>
-</div>
-<div>
-<p class="font-label-caps text-label-caps text-on-surface">Cajero 01</p>
-<p class="text-[10px] uppercase font-bold text-primary">En turno</p>
-</div>
-</div>
-<a class="flex items-center gap-md text-secondary px-lg py-md hover:bg-surface-container-high transition-all font-label-caps text-label-caps" href="#">
-<span class="material-symbols-outlined">logout</span>
-                Logout
-            </a>
-</div>
-</aside>
-<main class="ml-[280px] flex-grow flex flex-col h-screen">
-<!-- TopNavBar (Shared Component) -->
-<header class="flex justify-between items-center w-full px-lg h-16 bg-surface border-b border-surface-variant z-10">
-<div class="flex items-center gap-lg">
-<div class="relative">
-<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary">search</span>
-<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-64 font-body-sm text-body-sm" placeholder="Buscar productos..." type="text"/>
-</div>
-<nav class="hidden md:flex items-center gap-xl">
-<a class="text-primary-container font-bold border-b-2 border-primary-container pb-1 font-body-md text-body-md" href="#">Inventory</a>
-<a class="text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">Sales</a>
-<a class="text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">Reports</a>
-</nav>
-</div>
-<div class="flex items-center gap-md">
-<button class="p-2 hover:bg-surface-container-low rounded-full text-secondary transition-all active:scale-95">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<button class="p-2 hover:bg-surface-container-low rounded-full text-secondary transition-all active:scale-95">
-<span class="material-symbols-outlined">settings</span>
-</button>
-<button class="p-2 hover:bg-surface-container-low rounded-full text-secondary transition-all active:scale-95">
-<span class="material-symbols-outlined">person</span>
-</button>
-</div>
-</header>
-<!-- Main Content Area: Split 70/30 -->
-<div class="flex-grow flex overflow-hidden">
-<!-- Section Left (70%): Productos Disponibles -->
-<section class="w-[70%] h-full flex flex-col p-lg gap-lg bg-surface-container-low overflow-y-auto">
-<div class="flex flex-col gap-md">
-<h2 class="font-h2 text-h2 text-on-surface">Catálogo de Productos</h2>
-<!-- Filtros Rápidos -->
-<div class="flex gap-sm">
-<button class="px-lg py-sm rounded-full bg-primary-container text-on-primary-container font-button text-button shadow-sm hover:opacity-90 transition-all">Todos</button>
-<button class="px-lg py-sm rounded-full bg-surface-container-lowest border border-outline-variant text-secondary font-button text-button hover:bg-surface-container transition-all">Lácteos</button>
-<button class="px-lg py-sm rounded-full bg-surface-container-lowest border border-outline-variant text-secondary font-button text-button hover:bg-surface-container transition-all">Abarrotes</button>
-<button class="px-lg py-sm rounded-full bg-surface-container-lowest border border-outline-variant text-secondary font-button text-button hover:bg-surface-container transition-all">Limpieza</button>
-<button class="px-lg py-sm rounded-full bg-surface-container-lowest border border-outline-variant text-secondary font-button text-button hover:bg-surface-container transition-all">Bebidas</button>
-</div>
-</div>
-<!-- Product Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-md pb-xl">
-<!-- Product Card 1 -->
-<div class="bg-surface-container-lowest p-md rounded-xl border border-surface-variant hover:border-primary-container hover:shadow-lg transition-all cursor-pointer group active:scale-95">
-<div class="aspect-square rounded-lg bg-surface-container-low mb-md overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A high-quality product photo of a carton of Gloria milk, standing prominently on a clean white surface with soft studio lighting. The aesthetic is professional and commercial, fitting a modern minimarket POS interface with clean lines and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyF-gzcW_EQWq36BBE1pv7KE33kvRlXKQ1xL0zdpJixCPLRtZP9CydDLi01DJeETgKDfQmXf4n5K2YvZ1b-7VLZjO0KIwIx7LPLNud_hQ3MOVMo2JXD0iaGDqct-31_Lnav-lbmAqJnPzOhGEXAJGk3McVb7bOh6QiTafCqJfA1H60EBG8g5FsxJVatA4O7nZRGfWr3ytOYws28hk_Fm8HnXfejK2EqnSOsC-veQub41xL-qITy4UOPGpxFxPq0OJ5DSLwFXcOYj6T"/>
-<span class="absolute top-2 right-2 bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] font-bold">LÁCTEOS</span>
-</div>
-<h4 class="font-body-md text-body-md font-semibold text-on-surface">Leche Gloria 400g</h4>
-<div class="flex justify-between items-center mt-sm">
-<p class="text-primary font-h3 text-h3">S/ 4.50</p>
-<span class="font-label-caps text-[10px] text-secondary">45 en stock</span>
-</div>
-</div>
-<!-- Product Card 2 -->
-<div class="bg-surface-container-lowest p-md rounded-xl border border-surface-variant hover:border-primary-container hover:shadow-lg transition-all cursor-pointer group active:scale-95">
-<div class="aspect-square rounded-lg bg-surface-container-low mb-md overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A high-quality product photo of a 1kg bag of white rice, professionally packaged, on a minimalist background. The lighting is bright and clean, typical of a corporate retail catalog. The colors are neutral with high contrast, ensuring readability and focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm8KcLdx9UBEZzak_JBaEaS_HcDQp--_GnZKCSDd5xEA_WAF_fWaKvS6KE6iGzwXaZ2cjazYcFdoZ5UmrUn0m54n1zCjFvke8XrNRu8hzoMYAV5_itsjV_1Dzj4e4E6ewIM7JYPtu3Gyb59sMcnhpSgc90Wysr9hBy6EkachOq1GYOU3a_UEQLj8uuSQmq0bKdflTHGd1jD8lzc5xJCDGj3rbTcJ73gY2avaXLAEnW89a6pVktXSAUF7rZNk2P8O5ynKcItqU4r_V1"/>
-<span class="absolute top-2 right-2 bg-surface-container-highest text-secondary px-2 py-1 rounded text-[10px] font-bold">ABARROTES</span>
-</div>
-<h4 class="font-body-md text-body-md font-semibold text-on-surface">Arroz Extra 1kg</h4>
-<div class="flex justify-between items-center mt-sm">
-<p class="text-primary font-h3 text-h3">S/ 3.80</p>
-<span class="font-label-caps text-[10px] text-secondary">120 en stock</span>
-</div>
-</div>
-<!-- Product Card 3 -->
-<div class="bg-surface-container-lowest p-md rounded-xl border border-surface-variant hover:border-primary-container hover:shadow-lg transition-all cursor-pointer group active:scale-95">
-<div class="aspect-square rounded-lg bg-surface-container-low mb-md overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A professional product shot of a 2.5L bottle of Inca Kola soda, vibrant yellow color, with droplets of condensation for freshness. The background is a clean, neutral gray, highlighting the product. The style is sharp and modern commercial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3ii57JRIx2IjvIF8v9Pu07T03nFUF9T6GvbMS985idblgPYvtLcSg6re5jD22NYAV33g_RiqaQFQnIJEBP8_QH22cOycr79ZEgYg5Uyx4At76Um-qJcVA4zg949eiiy4Ox3HbnpbzdBRRDfytOpdiRereKr2DFrh79qE3n4B182VjMlBYrsGXoLt6CU4TO7gn14ExIpdbUDipaMH72kZfxx0A6DptU-mS-J6gTyLd4s7fJQicBFOx_50_DHzQimF4lyJuEdGhGq42"/>
-<span class="absolute top-2 right-2 bg-tertiary-container text-on-tertiary-container px-2 py-1 rounded text-[10px] font-bold">BEBIDAS</span>
-</div>
-<h4 class="font-body-md text-body-md font-semibold text-on-surface">Inca Kola 2.5L</h4>
-<div class="flex justify-between items-center mt-sm">
-<p class="text-primary font-h3 text-h3">S/ 9.50</p>
-<span class="font-label-caps text-[10px] text-secondary">15 en stock</span>
-</div>
-</div>
-<!-- Product Card 4 -->
-<div class="bg-surface-container-lowest p-md rounded-xl border border-surface-variant hover:border-primary-container hover:shadow-lg transition-all cursor-pointer group active:scale-95">
-<div class="aspect-square rounded-lg bg-surface-container-low mb-md overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clean, bright product shot of a dish soap bottle (Ayudin) on a white tile surface. The lighting is crisp and highlights the transparency of the bottle. High-end product photography for a retail app interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApY5nCNWYoHJmNJbniwxY-zUzNcTwTrvykbzVK74W1lv1vFB5ohHhy77vHdm_1cLFi3HPeJF9WJE4_YSVmbGDzznIPJmFIJBFqNwFodLXm7iPIUbSowUpGyJWzH80HZXrisBoDjGWuNCwa4lygjqU2Ow9XQQIrKg-dGbDPZ-LiWSCPPQVqbhFsSa5CTixytblS6CRj1jUv89RW6TCcXzFxr5dsQyfMeitHOKA5ttJPVmIexjW185gwfESOLa1nMtI6OWraxvnRA9TY"/>
-<span class="absolute top-2 right-2 bg-surface-container-highest text-secondary px-2 py-1 rounded text-[10px] font-bold">LIMPIEZA</span>
-</div>
-<h4 class="font-body-md text-body-md font-semibold text-on-surface">Detergente Líquido</h4>
-<div class="flex justify-between items-center mt-sm">
-<p class="text-primary font-h3 text-h3">S/ 12.00</p>
-<span class="font-label-caps text-[10px] text-error font-bold">2 en stock</span>
-</div>
-</div>
-<!-- Additional items for grid feel -->
-<div class="bg-surface-container-lowest p-md rounded-xl border border-surface-variant hover:border-primary-container hover:shadow-lg transition-all cursor-pointer group active:scale-95">
-<div class="aspect-square rounded-lg bg-surface-container-low mb-md overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A professional product photo of a box of cereal on a clean, minimal background. The lighting is even and the colors are vibrant but professional. High-resolution commercial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEPxc2t3y4ggNZU9iEW4Q_DcR10v7Ow0ZYsWAja37BW6lL5fA9Gylwn0Q4wkOYYDwaNasFkYzQMuNFMONeC2flS3-jQtS4YxyiuJIvHnMIS4sfmAuSCY5p26Q-MoTcXRkQQO_56CfrJf3lhBiCvkHAox3gBRLAvzT5mkjE2lN7yDgTEGF64-5r6V8d51zWSjvH0Cf9W1uCLgusIy3MK6uYex7ji_7G_pchTPX8FxZ4gmvIGY0y3QCd3fGPBXa98RoSpIzoYUOEt_Uw"/>
-<span class="absolute top-2 right-2 bg-surface-container-highest text-secondary px-2 py-1 rounded text-[10px] font-bold">ABARROTES</span>
-</div>
-<h4 class="font-body-md text-body-md font-semibold text-on-surface">Cereal Angel 500g</h4>
-<div class="flex justify-between items-center mt-sm">
-<p class="text-primary font-h3 text-h3">S/ 11.50</p>
-<span class="font-label-caps text-[10px] text-secondary">32 en stock</span>
-</div>
-</div>
-</div>
-</section>
-<!-- Section Right (30%): Registro de Venta -->
-<section class="w-[30%] h-full bg-surface flex flex-col border-l border-surface-variant">
-<div class="p-lg border-b border-surface-variant flex justify-between items-center">
-<h3 class="font-h3 text-h3 font-bold text-on-surface flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">shopping_cart</span>
-                        Ticket
-                    </h3>
-<button class="text-secondary hover:text-error transition-colors p-1">
-<span class="material-symbols-outlined">delete_sweep</span>
-</button>
-</div>
-<!-- Product List in Ticket -->
-<div class="flex-grow overflow-y-auto p-lg flex flex-col gap-md">
-<!-- Ticket Item 1 -->
-<div class="flex items-center gap-md p-md bg-surface-container-lowest rounded-lg border border-surface-variant shadow-sm">
-<div class="w-12 h-12 bg-surface-container rounded overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="Small thumbnail of a milk carton, clean and isolated on a white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd1wZuEpzx6BDV7CexfI5SKvNejTGTF_Ep8x-idVF0czf-DBHIUW4BT3RwkDSsBIceUz8W6zy1DjmyYa2cn8eMEaGmHNEUPjB9sHy9m60d0PxsCE1pD-aZ1l4uwGvumySgjvx3DVgffsDLZW_vTJWM13y8PIU1fTc_83XVp3ZTIGZX-Vl0Ie784eR9urLwZPngOeNCXvVVM9lGzGURfPfNY1wQoj5jw7-GnV95f5cEvF-sbnKJuu_wZgIZtetat49PLUOdrx4gh5wE"/>
-</div>
-<div class="flex-grow">
-<p class="font-body-sm text-body-sm font-semibold">Leche Gloria</p>
-<p class="text-[12px] text-secondary">S/ 4.50 / u</p>
-</div>
-<div class="flex flex-col items-end gap-xs">
-<div class="flex items-center gap-sm bg-surface-container-low rounded-lg p-1">
-<button class="px-lg py-sm rounded-full bg-primary-container text-on-primary-container font-button text-button shadow-sm hover:opacity-90 transition-all">Todos</button>
-<span class="font-bold text-body-sm px-1">2</span>
-<button class="w-6 h-6 flex items-center justify-center rounded-md text-on-primary active:scale-90 transition-all bg-primary-container">
-<span class="material-symbols-outlined text-[14px]">add</span>
-</button>
-</div>
-<p class="font-bold text-primary text-body-sm">S/ 9.00</p>
-</div>
-<button class="text-outline hover:text-error p-1">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-<!-- Ticket Item 2 -->
-<div class="flex items-center gap-md p-md bg-surface-container-lowest rounded-lg border border-surface-variant shadow-sm">
-<div class="w-12 h-12 bg-surface-container rounded overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="Small thumbnail of a water bottle, clean and isolated on a white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw9BY_LIMT8XBdLjvzw6iJ_wwQJ4QYO9N9C0WyVkxQ-d_ehavGRwOM_eiCeEfGKsxqew88rHuPr9MfM3oWHM9wX56mogvKrQx5L4LR4j7N0XWrPs7ppfmtEQq_qxUgfHus4RdGK0cCIY4gIz6wLH_KEZMXe226_Rq-CrfkKYIbpBVlG9K6I0BmhqMgECLPlmI-_OmSVyUXPv9vfW4LYbrieXo_tjYrFRTdMhlpCdhN7ZnJUTkTWEM_Ss9UhT4Y7jP36zn6pDyON_BW"/>
-</div>
-<div class="flex-grow">
-<p class="font-body-sm text-body-sm font-semibold">Agua San Mateo</p>
-<p class="text-[12px] text-secondary">S/ 2.00 / u</p>
-</div>
-<div class="flex flex-col items-end gap-xs">
-<div class="flex items-center gap-sm bg-surface-container-low rounded-lg p-1">
-<button class="px-lg py-sm rounded-full bg-primary-container text-on-primary-container font-button text-button shadow-sm hover:opacity-90 transition-all">Todos</button>
-<span class="font-bold text-body-sm px-1">1</span>
-<button class="w-6 h-6 flex items-center justify-center rounded-md text-on-primary active:scale-90 transition-all bg-primary-container">
-<span class="material-symbols-outlined text-[14px]">add</span>
-</button>
-</div>
-<p class="font-bold text-primary text-body-sm">S/ 2.00</p>
-</div>
-<button class="text-outline hover:text-error p-1">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</div>
-<!-- Totals and Checkout -->
-<div class="p-lg bg-surface-container-lowest border-t border-surface-variant shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-<div class="space-y-sm mb-lg">
-<div class="flex justify-between font-body-sm text-body-sm text-secondary">
-<span>Subtotal</span>
-<span>S/ 9.32</span>
-</div>
-<div class="flex justify-between font-body-sm text-body-sm text-secondary">
-<span>IGV (18%)</span>
-<span>S/ 1.68</span>
-</div>
-<div class="flex justify-between font-h2 text-h2 text-on-surface border-t border-surface-variant pt-sm mt-sm">
-<span class="font-extrabold">TOTAL</span>
-<span class="text-primary font-extrabold">S/ 11.00</span>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-md mb-md">
-<button class="py-md border border-outline-variant rounded-xl flex flex-col items-center gap-xs hover:bg-surface-container transition-all">
-<span class="material-symbols-outlined text-secondary">payments</span>
-<span class="font-label-caps text-[10px] uppercase font-bold text-secondary">Efectivo</span>
-</button>
-<button class="py-md border-2 border-primary-container rounded-xl flex flex-col items-center gap-xs bg-primary-container text-on-primary-container">
-<span class="material-symbols-outlined text-on-primary-container">credit_card</span>
-<span class="font-label-caps text-[10px] uppercase font-bold text-on-primary-container">Tarjeta/QR</span>
-</button>
-</div>
-<button class="w-full py-xl bg-[#4CAF50] hover:bg-[#43A047] text-white font-h3 text-h3 rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-md">
-<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        COBRAR
-                    </button>
-</div>
-</section>
-</div>
-</main>
-<script>
-        // Micro-interaction: Filter button selection
-        const filterButtons = document.querySelectorAll('button.font-button');
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterButtons.forEach(b => {
-                    b.classList.remove('bg-primary', 'text-on-primary');
-                    b.classList.add('bg-surface-container-lowest', 'border', 'border-outline-variant', 'text-secondary');
-                });
-                btn.classList.remove('bg-surface-container-lowest', 'border', 'border-outline-variant', 'text-secondary');
-                btn.classList.add('bg-primary', 'text-on-primary');
-            });
-        });
+    <!-- Sección Derecha: Formulario de Login -->
+    <div class="login-right">
+        <div class="form-wrapper">
+            
+            <div class="form-header">
+                <h2>Bienvenido de nuevo</h2>
+                <p>Ingrese sus credenciales para acceder al panel.</p>
+            </div>
 
-        // Payment method toggle
-        const paymentMethods = document.querySelectorAll('.grid.grid-cols-2 button');
-        paymentMethods.forEach(method => {
-            method.addEventListener('click', () => {
-                paymentMethods.forEach(m => {
-                    m.classList.remove('border-2', 'border-primary', 'bg-primary-fixed', 'text-on-primary-fixed-variant');
-                    m.classList.add('border', 'border-outline-variant', 'bg-transparent', 'text-secondary');
-                });
-                method.classList.remove('border', 'border-outline-variant', 'text-secondary');
-                method.classList.add('border-2', 'border-primary', 'bg-primary-fixed', 'text-on-primary-fixed-variant');
-            });
-        });
-    </script>
-</body></html>
+            <form action="#" method="POST">
+                
+                <div class="input-group">
+                    <label for="username">Usuario</label>
+                    <div class="input-wrapper">
+                        <span class="material-symbols-outlined icon-left">person</span>
+                        <input type="text" id="username" placeholder="nombre.apellido">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-wrapper">
+                        <span class="material-symbols-outlined icon-left">lock</span>
+                        <input type="password" id="password" placeholder="••••••••••••">
+                        <span class="material-symbols-outlined icon-right">visibility</span>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me"> Recordar sesión
+                    </label>
+                    <a href="#" class="forgot-password">¿Olvidó su contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Iniciar Sesión <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </form>
+
+            <p class="support-text">
+                ¿Necesita ayuda? Contacte con <a href="#">Soporte Técnico</a>
+            </p>
+
+            <div class="secure-badge">
+                <span class="material-symbols-outlined badge-icon">lock</span>
+                <div class="badge-text">
+                    <h4>Servidor Seguro</h4>
+                    <p>Conexión Encriptada SSL</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
