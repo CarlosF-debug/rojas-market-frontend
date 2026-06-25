@@ -1,420 +1,368 @@
-/* Heredando el estilo global de tu login */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #c73a2b;
+  --primary-dark: #a52f23;
+  --sidebar: #c73a2b;
+  --sidebar-hover: #9f2d21;
+  --bg: #f5f6fa;
+  --white: #ffffff;
+  --gray: #8d8d8d;
+  --border: #e8e8e8;
+  --success: #27ae60;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 .pagina-pos {
   display: flex;
   height: 100vh;
-  width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
-  background: #fdf0ef; /* Fondo con un tinte rojizo muy suave, inspirado en tu diseño */
-  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
 }
 
-/* ================== SIDEBAR ================== */
+/* SIDEBAR */
+
 .sidebar {
-  width: 260px;
-  background: white;
-  border-right: 1.5px solid #e0e0e0;
+  width: 250px;
+  background: var(--sidebar);
+  color: white;
   display: flex;
   flex-direction: column;
-  z-index: 10;
+  justify-content: space-between;
 }
 
 .brand {
-  padding: 32px 24px;
+  padding: 25px;
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
 
 .brand h1 {
-  font-size: 24px;
-  font-weight: 800;
-  color: #1a1a2e; /* Mismo color de título que tu login */
-  line-height: 1.1;
+  font-size: 28px;
 }
 
 .brand p {
   font-size: 13px;
-  color: #888;
-  margin-top: 4px;
+  opacity: .8;
 }
 
 .navegacion {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  padding: 10px;
 }
 
 .nav-item {
   display: flex;
+  gap: 14px;
   align-items: center;
-  gap: 12px;
-  padding: 14px 24px;
   text-decoration: none;
-  color: #555;
-  font-size: 14px;
-  font-weight: 600;
-  border-left: 4px solid transparent;
-  transition: all 0.2s;
+  color: white;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: .3s;
 }
 
-.nav-item:hover { background: #fdf0ef; }
-
+.nav-item:hover,
 .nav-item.activo {
-  background: #fdf0ef;
-  color: #c0392b; /* Rojo corporativo */
-  border-left-color: #c0392b;
+  background: var(--sidebar-hover);
 }
+
+/* USER */
 
 .usuario-footer {
   padding: 20px;
-  border-top: 1.5px solid #e0e0e0;
 }
 
 .perfil {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fafafa;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 12px;
 }
 
 .perfil img {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  object-fit: cover;
-}
-
-.info strong {
-  display: block;
-  font-size: 13px;
-  color: #1a1a2e;
 }
 
 .info span {
-  font-size: 10px;
-  color: #c0392b;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  color: #f9d9d4;
 }
 
 .logout {
+  margin-top: 25px;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #888;
+  gap: 10px;
   text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px;
+  color: white;
 }
-.logout:hover { color: #c0392b; }
 
-/* ================== CONTENIDO CENTRAL ================== */
+/* MAIN */
+
 .contenido-central {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+/* TOPBAR */
+
 .topbar {
   height: 70px;
   background: white;
-  border-bottom: 1.5px solid #e0e0e0;
+  border-bottom: 1px solid var(--border);
+  padding: 0 30px;
   display: flex;
   align-items: center;
-  padding: 0 32px;
 }
 
 .topbar-izq {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 35px;
 }
 
-/* Reutilización de tu .input-wrapper */
-.buscador.input-wrapper {
-  width: 280px;
-  padding: 0 12px;
-  height: 40px;
+.input-wrapper input {
+  width: 350px;
+  padding: 12px 15px 12px 42px;
+  border: none;
+  background: #f3f4f7;
+  border-radius: 10px;
 }
-.buscador input { padding: 0; } /* Ajuste interno */
+
+.icono {
+  position: absolute;
+  left: 14px;
+  top: 11px;
+}
 
 .menu-superior {
   display: flex;
-  gap: 24px;
+  gap: 30px;
 }
 
 .menu-superior a {
   text-decoration: none;
-  color: #888;
-  font-size: 14px;
-  font-weight: 600;
-  position: relative;
-  height: 70px;
-  display: flex;
-  align-items: center;
+  color: #444;
 }
 
 .menu-superior a.activo {
-  color: #c0392b;
-}
-.menu-superior a.activo::after {
-  content: '';
-  position: absolute;
-  bottom: -1.5px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: #c0392b;
-  border-radius: 3px 3px 0 0;
+  color: var(--primary);
+  font-weight: bold;
 }
 
-/* Área de Trabajo */
+/* CONTENT */
+
 .area-trabajo {
   display: flex;
   flex: 1;
-  overflow: hidden;
 }
 
-/* Catalogo */
+/* CATALOG */
+
 .catalogo {
   flex: 1;
-  padding: 32px;
-  overflow-y: auto;
+  padding: 30px;
 }
 
 .catalogo h2 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 24px;
+  font-size: 35px;
+  margin-bottom: 20px;
 }
 
 .filtros {
   display: flex;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 25px;
 }
 
 .filtro {
+  border: none;
   background: white;
-  border: 1.5px solid #e0e0e0;
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #555;
+  padding: 12px 18px;
+  border-radius: 30px;
   cursor: pointer;
 }
 
 .filtro.activo {
-  background: #c0392b;
+  background: var(--primary);
   color: white;
-  border-color: #c0392b;
 }
 
-/* Grid de Productos */
+/* PRODUCTS */
+
 .grid-productos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
 .tarjeta-producto {
   background: white;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 16px;
-  position: relative;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.05);
+  transition: .3s;
+  cursor: pointer;
 }
 
 .tarjeta-producto:hover {
-  border-color: #c0392b;
-  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.1);
-}
-
-.badge-tag {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  color: white;
-  font-size: 9px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
+  transform: translateY(-5px);
 }
 
 .img-wrapper {
-  background: #fafafa;
-  border-radius: 8px;
-  height: 140px;
+  width: 100%;
+  height: 150px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  align-items: center;
 }
 
-.img-wrapper img { height: 80%; object-fit: contain; }
+.img-wrapper img {
+  max-height: 130px;
+  object-fit: contain;
+}
 
-.placeholder-img {
-  width: 30px; height: 80px; border: 2px solid white; border-radius: 6px;
+.badge-tag {
+  display: inline-block;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  margin-bottom: 10px;
 }
 
 .tarjeta-producto h4 {
-  font-size: 14px;
-  color: #1a1a2e;
-  font-weight: 600;
-  margin-bottom: 12px;
+  margin: 15px 0;
+  font-size: 18px;
 }
 
 .precio-stock {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
 }
 
 .precio {
-  font-size: 14px;
-  font-weight: 700;
-  color: #c0392b;
+  color: var(--primary);
+  font-size: 28px;
+  font-weight: bold;
 }
-.precio span { font-size: 22px; font-weight: 800; }
 
 .stock {
-  font-size: 10px;
-  color: #888;
-  font-weight: 600;
-  text-align: right;
-  line-height: 1.2;
+  font-size: 12px;
+  color: gray;
 }
 
-/* ================== TICKET PANEL ================== */
+/* TICKET */
+
 .ticket-panel {
-  width: 340px;
+  width: 360px;
   background: white;
-  border-left: 1.5px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
+  border-left: 1px solid var(--border);
 }
 
 .ticket-header {
-  padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1.5px solid #fafafa;
-}
-
-.ticket-header h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.btn-basura {
-  background: none; border: none; cursor: pointer;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
 }
 
 .ticket-items {
-  flex: 1;
-  overflow-y: auto;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 .item-fila {
-  border: 1.5px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 12px;
+  background: #fafafa;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.item-info p {
+  font-weight: bold;
+}
+
+.item-controles {
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
+  margin: 10px 0;
   align-items: center;
 }
 
-.item-info p { font-size: 13px; font-weight: 600; color: #1a1a2e; }
-.item-info span { font-size: 11px; color: #888; }
+.badge-mini {
+  background: var(--primary);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
 
-.item-controles { display: flex; align-items: center; gap: 8px; }
-.badge-mini { background: #c0392b; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
-.item-controles strong { font-size: 14px; color: #1a1a2e; }
-.btn-mas { width: 20px; height: 20px; border-radius: 4px; background: #c0392b; color: white; border: none; font-weight: bold; cursor: pointer; padding: 0;}
+.btn-mas {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+}
 
-.item-total { font-size: 14px; font-weight: 700; color: #c0392b; }
+.item-total {
+  color: var(--primary);
+  text-align: right;
+  font-weight: bold;
+}
 
-/* Resumen final */
+/* RESUMEN */
+
 .ticket-resumen {
-  padding: 24px;
-  background: #fafafa;
-  border-top: 1.5px solid #e0e0e0;
+  padding: 20px;
+  border-top: 1px solid var(--border);
 }
 
-.fila-resumen {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: #888;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
+.fila-resumen,
 .fila-total {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-  margin-bottom: 24px;
-  padding-top: 16px;
-  border-top: 1.5px solid #e0e0e0;
+  margin-bottom: 15px;
 }
 
-.fila-total span { font-size: 20px; font-weight: 800; color: #1a1a2e; }
-.fila-total .monto { font-size: 26px; color: #c0392b; }
+.fila-total {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.monto {
+  color: var(--primary);
+}
 
 .metodos-pago {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 12px;
-  margin-bottom: 16px;
+  margin: 20px 0;
 }
 
 .btn-metodo {
-  padding: 12px;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 8px;
+  flex: 1;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   background: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #555;
-  cursor: pointer;
-  margin-bottom: 0; /* Override de tu CSS global */
 }
 
 .btn-metodo.activo {
-  background: #c0392b;
-  border-color: #c0392b;
+  background: var(--primary);
   color: white;
 }
 
-/* Reutilizando tu clase de botón principal, adaptada al ticket */
 .btn-cobrar {
-  background: #27ae60; /* Verde éxito para cobrar */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 0;
+  width: 100%;
+  padding: 18px;
+  border: none;
+  background: var(--success);
+  color: white;
+  font-size: 20px;
+  border-radius: 14px;
 }
-.btn-cobrar:hover { background: #219653; }
