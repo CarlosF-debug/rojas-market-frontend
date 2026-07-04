@@ -3,6 +3,7 @@ import { Login } from './login/login';
 import { Dashboard } from './dashboard/dashboard';
 import { Productos } from './productos/productos';
 import { Categorias } from './categorias/categorias';
+import { Proveedores } from './proveedores/proveedores';
 import { Ventas } from './ventas/ventas';
 
 export const routes: Routes = [

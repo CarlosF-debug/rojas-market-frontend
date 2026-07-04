@@ -1,0 +1,664 @@
+<div class="layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">🛒</div>
+
+      <div>
+        <h2>ROJAS MARKET</h2>
+        <span>ADMIN PANEL</span>
+      </div>
+
+    </div>
+
+    <nav>
+
+      <a routerLink="/dashboard">
+        <i>🏠</i>
+        Inicio
+      </a>
+
+      <a routerLink="/productos">
+        <i>📦</i>
+        Inventario
+      </a>
+
+      <a routerLink="/proveedores" class="activo">
+        <i>🚚</i>
+        Proveedores
+      </a>
+
+      <a>
+        <i>📋</i>
+        Solicitudes de Compra
+      </a>
+
+      <a>
+        <i>📄</i>
+        Pedidos
+      </a>
+
+      <a routerLink="/ventas">
+        <i>💲</i>
+        POS
+      </a>
+
+      <a>
+        <i>🤖</i>
+        Reportes IA
+      </a>
+
+    </nav>
+
+    <div class="bottom">
+
+      <a>
+        ⚙ Ajustes
+      </a>
+
+      <a (click)="cerrarSesion()">
+        🚪 Cerrar sesión
+      </a>
+
+    </div>
+
+  </aside>
+
+  <!-- ===================== CONTENIDO ===================== -->
+
+  <main class="contenido">
+
+      <!-- Barra superior -->
+
+      <div class="topbar">
+
+          <div class="buscador">
+
+              <input
+                  type="text"
+                  placeholder="Buscar proveedores, productos o pedidos...">
+
+          </div>
+
+          <div class="usuario">
+
+              🔔
+
+              <div class="avatar">
+                  C
+              </div>
+
+              <div>
+
+                  <strong>Carlos Fajardo</strong>
+
+                  <small>Administrador</small>
+
+              </div>
+
+          </div>
+
+      </div>
+
+      <!-- Encabezado -->
+
+      <div class="header">
+
+          <div>
+
+              <h1>Proveedores</h1>
+
+              <p>
+                  Gestiona la información de tus proveedores y su historial de compras.
+              </p>
+
+          </div>
+
+          <button class="btn-nuevo">
+
+              + Nuevo Proveedor
+
+          </button>
+
+      </div>
+
+      <!-- ===================== FILA SUPERIOR ===================== -->
+
+      <div class="fila-superior">
+
+        <!-- ===================== TABLA DE PROVEEDORES ===================== -->
+
+<div class="card proveedores-card">
+
+    <div class="card-header">
+
+        <h2>Lista de Proveedores</h2>
+
+        <span class="badge">
+            6 Total
+        </span>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>CÓDIGO</th>
+
+                <th>PROVEEDOR</th>
+
+                <th>CONTACTO</th>
+
+                <th>TELÉFONO</th>
+
+                <th>CORREO</th>
+
+                <th>ESTADO</th>
+
+                <th>ACCIONES</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr>
+
+                <td class="codigo">PR001</td>
+
+                <td>Distribuidora Coca Cola</td>
+
+                <td>Juan Pérez</td>
+
+                <td>987654321</td>
+
+                <td>ventas@cocacola.com</td>
+
+                <td>
+
+                    <span class="estado activo">
+
+                        Activo
+
+                    </span>
+
+                </td>
+
+                <td class="acciones">
+
+                    👁️
+
+                    ✏️
+
+                    🗑️
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="codigo">PR002</td>
+
+                <td>Tecno Import SAC</td>
+
+                <td>María Díaz</td>
+
+                <td>965874123</td>
+
+                <td>pedidos@tecno.com</td>
+
+                <td>
+
+                    <span class="estado activo">
+
+                        Activo
+
+                    </span>
+
+                </td>
+
+                <td class="acciones">
+
+                    👁️
+
+                    ✏️
+
+                    🗑️
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="codigo">PR003</td>
+
+                <td>San Miguel Distribuciones</td>
+
+                <td>Luis García</td>
+
+                <td>912345678</td>
+
+                <td>contacto@sanmiguel.com</td>
+
+                <td>
+
+                    <span class="estado activo">
+
+                        Activo
+
+                    </span>
+
+                </td>
+
+                <td class="acciones">
+
+                    👁️
+
+                    ✏️
+
+                    🗑️
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="codigo">PR004</td>
+
+                <td>Embotelladora San Luis</td>
+
+                <td>Pedro Ramos</td>
+
+                <td>944221100</td>
+
+                <td>ventas@sanluis.com</td>
+
+                <td>
+
+                    <span class="estado activo">
+
+                        Activo
+
+                    </span>
+
+                </td>
+
+                <td class="acciones">
+
+                    👁️
+
+                    ✏️
+
+                    🗑️
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="codigo">PR005</td>
+
+                <td>Inversiones Luna SAC</td>
+
+                <td>Ana Luna</td>
+
+                <td>901112223</td>
+
+                <td>info@luna.com</td>
+
+                <td>
+
+                    <span class="estado activo">
+
+                        Activo
+
+                    </span>
+
+                </td>
+
+                <td class="acciones">
+
+                    👁️
+
+                    ✏️
+
+                    🗑️
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="codigo">PR006</td>
+
+                <td>Distribuidora Don Paco</td>
+
+                <td>Francisco Rojas</td>
+
+                <td>933445566</td>
+
+                <td>pedidos@donpaco.com</td>
+
+                <td>
+
+                    <span class="estado inactivo">
+
+                        Inactivo
+
+                    </span>
+
+                </td>
+
+                <td class="acciones">
+
+                    👁️
+
+                    ✏️
+
+                    🗑️
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- ===================== INFORMACIÓN DEL PROVEEDOR ===================== -->
+
+<div class="card proveedor-info">
+
+    <h2>Información del Proveedor</h2>
+
+    <div class="empresa">
+
+        <div class="empresa-icono">
+            🏢
+        </div>
+
+        <div>
+
+            <h3>Distribuidora Coca Cola</h3>
+
+        </div>
+
+    </div>
+
+    <div class="info-item">
+
+        <span>🪪</span>
+
+        <div>
+
+            <strong>RUC</strong>
+
+            <p>20123456789</p>
+
+        </div>
+
+    </div>
+
+    <div class="info-item">
+
+        <span>📞</span>
+
+        <div>
+
+            <strong>Teléfono</strong>
+
+            <p>987 654 321</p>
+
+        </div>
+
+    </div>
+
+    <div class="info-item">
+
+        <span>✉️</span>
+
+        <div>
+
+            <strong>Correo</strong>
+
+            <p>ventas@cocacola.com</p>
+
+        </div>
+
+    </div>
+
+    <div class="info-item">
+
+        <span>📍</span>
+
+        <div>
+
+            <strong>Dirección</strong>
+
+            <p>Av. La Marina 1234, Lima</p>
+
+        </div>
+
+    </div>
+
+    <div class="info-item">
+
+        <span>📦</span>
+
+        <div>
+
+            <strong>Productos suministrados</strong>
+
+            <p>Bebidas gaseosas, Aguas, Jugos</p>
+
+        </div>
+
+    </div>
+
+    <button class="btn-historial">
+
+        ⟳ Ver Historial de Compras
+
+    </button>
+
+</div>
+
+</div>
+
+<!-- ===================== FIN FILA SUPERIOR ===================== -->
+
+<!-- ===================== FILA INFERIOR ===================== -->
+
+<div class="fila-inferior">
+
+    <!-- NUEVA SOLICITUD -->
+
+    <div class="card solicitud-card">
+
+        <div class="card-header">
+
+            <h2>Nueva Solicitud de Compra</h2>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Proveedor</label>
+
+            <select>
+
+                <option>Distribuidora Coca Cola</option>
+                <option>Tecno Import SAC</option>
+                <option>San Miguel Distribuciones</option>
+                <option>Distribuidora Don Paco</option>
+
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Fecha de solicitud</label>
+
+            <input type="date">
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Producto</label>
+
+            <input
+                type="text"
+                placeholder="Ej. Arroz Costeño 50Kg">
+
+        </div>
+
+        <div class="dos-columnas">
+
+            <div class="form-group">
+
+                <label>Cantidad</label>
+
+                <input
+                    type="number"
+                    placeholder="0">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Unidad</label>
+
+                <select>
+
+                    <option>Cajas</option>
+                    <option>Paquetes</option>
+                    <option>Unidades</option>
+                    <option>Sacos</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Observaciones</label>
+
+            <textarea rows="4"
+                placeholder="Escriba alguna observación..."></textarea>
+
+        </div>
+
+        <button class="btn-solicitud">
+
+            📦 Enviar Solicitud
+
+        </button>
+
+    </div>
+
+    <!-- PEDIDOS -->
+
+    <div class="card pedidos-card">
+
+        <div class="card-header">
+
+            <h2>Pedidos a Proveedores</h2>
+
+        </div>
+
+        <div class="pedido">
+
+            <div>
+
+                <strong>#PED-001</strong>
+
+                <p>Distribuidora Coca Cola</p>
+
+            </div>
+
+            <span class="pendiente">
+
+                Pendiente
+
+            </span>
+
+        </div>
+
+        <div class="pedido">
+
+            <div>
+
+                <strong>#PED-002</strong>
+
+                <p>Tecno Import SAC</p>
+
+            </div>
+
+            <span class="proceso">
+
+                Enviado
+
+            </span>
+
+        </div>
+
+        <div class="pedido">
+
+            <div>
+
+                <strong>#PED-003</strong>
+
+                <p>San Miguel Distribuciones</p>
+
+            </div>
+
+            <span class="entregado">
+
+                Entregado
+
+            </span>
+
+        </div>
+
+        <div class="pedido">
+
+            <div>
+
+                <strong>#PED-004</strong>
+
+                <p>Distribuidora Don Paco</p>
+
+            </div>
+
+            <span class="cancelado">
+
+                Cancelado
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
+
+</div>
