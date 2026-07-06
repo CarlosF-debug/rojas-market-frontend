@@ -2,6 +2,13 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-categorias',
+<<<<<<< HEAD
+  imports: [],
+  templateUrl: './categorias.html',
+  styleUrl: './categorias.css',
+})
+export class Categorias {}
+=======
   templateUrl: 'categorias.html',
   styleUrls: ['categorias.css']
 })
@@ -61,3 +68,4 @@ export class Categorias {
     this.carrito = [];
   }
 }
+>>>>>>> origin/main
