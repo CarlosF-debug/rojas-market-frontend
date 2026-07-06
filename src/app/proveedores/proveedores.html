@@ -25,20 +25,16 @@
         Inventario
       </a>
 
+      <a routerLink="/categorias">
+        <i>📦</i>
+        Categorías
+      </a>
+
       <a routerLink="/proveedores" class="activo">
         <i>🚚</i>
         Proveedores
       </a>
 
-      <a>
-        <i>📋</i>
-        Solicitudes de Compra
-      </a>
-
-      <a>
-        <i>📄</i>
-        Pedidos
-      </a>
 
       <a routerLink="/ventas">
         <i>💲</i>
@@ -77,8 +73,9 @@
           <div class="buscador">
 
               <input
-                  type="text"
-                  placeholder="Buscar proveedores, productos o pedidos...">
+    type="text"
+    placeholder="Buscar proveedor..."
+    [(ngModel)]="buscar">
 
           </div>
 
@@ -116,11 +113,13 @@
 
           </div>
 
-          <button class="btn-nuevo">
+         <button
+    class="btn-nuevo"
+    (click)="nuevoProveedor()">
 
-              + Nuevo Proveedor
+    + Nuevo Proveedor
 
-          </button>
+</button>
 
       </div>
 
@@ -168,211 +167,74 @@
 
         <tbody>
 
-            <tr>
+    <tr *ngFor="let proveedor of buscarProveedor()">
 
-                <td class="codigo">PR001</td>
+        <td class="codigo">
+            {{ proveedor.codigo }}
+        </td>
 
-                <td>Distribuidora Coca Cola</td>
+        <td>
+            {{ proveedor.nombre }}
+        </td>
 
-                <td>Juan Pérez</td>
+        <td>
+            {{ proveedor.contacto }}
+        </td>
 
-                <td>987654321</td>
+        <td>
+            {{ proveedor.telefono }}
+        </td>
 
-                <td>ventas@cocacola.com</td>
+        <td>
+            {{ proveedor.correo }}
+        </td>
 
-                <td>
+        <td>
 
-                    <span class="estado activo">
+            <span
+                class="estado"
+                [ngClass]="{
+                    'activo': proveedor.estado === 'Activo',
+                    'inactivo': proveedor.estado === 'Inactivo'
+                }">
 
-                        Activo
+                {{ proveedor.estado }}
 
-                    </span>
+            </span>
 
-                </td>
+        </td>
 
-                <td class="acciones">
+        <td class="acciones">
 
-                    👁️
+            <button
+                class="icono-btn"
+                (click)="verProveedor(proveedor)">
 
-                    ✏️
+                👁️
 
-                    🗑️
+            </button>
 
-                </td>
+            <button
+                class="icono-btn"
+                (click)="editarProveedor(proveedor)">
 
-            </tr>
+                ✏️
 
-            <tr>
+            </button>
 
-                <td class="codigo">PR002</td>
+            <button
+                class="icono-btn"
+                (click)="eliminarProveedor(proveedor.codigo)">
 
-                <td>Tecno Import SAC</td>
+                🗑️
 
-                <td>María Díaz</td>
+            </button>
 
-                <td>965874123</td>
+        </td>
 
-                <td>pedidos@tecno.com</td>
+    </tr>
 
-                <td>
-
-                    <span class="estado activo">
-
-                        Activo
-
-                    </span>
-
-                </td>
-
-                <td class="acciones">
-
-                    👁️
-
-                    ✏️
-
-                    🗑️
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td class="codigo">PR003</td>
-
-                <td>San Miguel Distribuciones</td>
-
-                <td>Luis García</td>
-
-                <td>912345678</td>
-
-                <td>contacto@sanmiguel.com</td>
-
-                <td>
-
-                    <span class="estado activo">
-
-                        Activo
-
-                    </span>
-
-                </td>
-
-                <td class="acciones">
-
-                    👁️
-
-                    ✏️
-
-                    🗑️
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td class="codigo">PR004</td>
-
-                <td>Embotelladora San Luis</td>
-
-                <td>Pedro Ramos</td>
-
-                <td>944221100</td>
-
-                <td>ventas@sanluis.com</td>
-
-                <td>
-
-                    <span class="estado activo">
-
-                        Activo
-
-                    </span>
-
-                </td>
-
-                <td class="acciones">
-
-                    👁️
-
-                    ✏️
-
-                    🗑️
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td class="codigo">PR005</td>
-
-                <td>Inversiones Luna SAC</td>
-
-                <td>Ana Luna</td>
-
-                <td>901112223</td>
-
-                <td>info@luna.com</td>
-
-                <td>
-
-                    <span class="estado activo">
-
-                        Activo
-
-                    </span>
-
-                </td>
-
-                <td class="acciones">
-
-                    👁️
-
-                    ✏️
-
-                    🗑️
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td class="codigo">PR006</td>
-
-                <td>Distribuidora Don Paco</td>
-
-                <td>Francisco Rojas</td>
-
-                <td>933445566</td>
-
-                <td>pedidos@donpaco.com</td>
-
-                <td>
-
-                    <span class="estado inactivo">
-
-                        Inactivo
-
-                    </span>
-
-                </td>
-
-                <td class="acciones">
-
-                    👁️
-
-                    ✏️
-
-                    🗑️
-
-                </td>
-
-            </tr>
-
-        </tbody>
+</tbody>
 
     </table>
 
@@ -392,7 +254,11 @@
 
         <div>
 
-            <h3>Distribuidora Coca Cola</h3>
+            <h3>
+
+    {{ proveedorSeleccionado?.nombre || 'Seleccione un proveedor' }}
+
+</h3>
 
         </div>
 
@@ -420,7 +286,11 @@
 
             <strong>Teléfono</strong>
 
-            <p>987 654 321</p>
+            <p>
+
+    {{ proveedorSeleccionado?.telefono || '-' }}
+
+</p>
 
         </div>
 
@@ -434,7 +304,11 @@
 
             <strong>Correo</strong>
 
-            <p>ventas@cocacola.com</p>
+            <p>
+
+    {{ proveedorSeleccionado?.correo || '-' }}
+
+</p>
 
         </div>
 
@@ -448,7 +322,11 @@
 
             <strong>Dirección</strong>
 
-            <p>Av. La Marina 1234, Lima</p>
+           <p>
+
+    {{ proveedorSeleccionado?.direccion || '-' }}
+
+</p>
 
         </div>
 
@@ -462,7 +340,11 @@
 
             <strong>Productos suministrados</strong>
 
-            <p>Bebidas gaseosas, Aguas, Jugos</p>
+           <p>
+
+    Estado: {{ proveedorSeleccionado?.estado || '-' }}
+
+</p>
 
         </div>
 
@@ -498,7 +380,7 @@
 
             <label>Proveedor</label>
 
-            <select>
+            <select [(ngModel)]="solicitud.proveedor">
 
                 <option>Distribuidora Coca Cola</option>
                 <option>Tecno Import SAC</option>
@@ -513,7 +395,9 @@
 
             <label>Fecha de solicitud</label>
 
-            <input type="date">
+           <input
+    type="date"
+    [(ngModel)]="solicitud.fecha">
 
         </div>
 
@@ -522,8 +406,9 @@
             <label>Producto</label>
 
             <input
-                type="text"
-                placeholder="Ej. Arroz Costeño 50Kg">
+    type="text"
+    placeholder="Ej. Arroz Costeño 50Kg"
+    [(ngModel)]="solicitud.producto">
 
         </div>
 
@@ -534,8 +419,8 @@
                 <label>Cantidad</label>
 
                 <input
-                    type="number"
-                    placeholder="0">
+    type="number"
+    [(ngModel)]="solicitud.cantidad">
 
             </div>
 
@@ -543,7 +428,7 @@
 
                 <label>Unidad</label>
 
-                <select>
+                <select [(ngModel)]="solicitud.unidad">
 
                     <option>Cajas</option>
                     <option>Paquetes</option>
@@ -560,12 +445,17 @@
 
             <label>Observaciones</label>
 
-            <textarea rows="4"
-                placeholder="Escriba alguna observación..."></textarea>
+            <textarea
+rows="4"
+placeholder="Escriba alguna observación..."
+[(ngModel)]="solicitud.observaciones">
+</textarea>
 
         </div>
 
-        <button class="btn-solicitud">
+        <button
+class="btn-solicitud"
+(click)="enviarSolicitud()">
 
             📦 Enviar Solicitud
 
@@ -575,90 +465,163 @@
 
     <!-- PEDIDOS -->
 
-    <div class="card pedidos-card">
+<div class="card pedidos-card">
 
-        <div class="card-header">
+    <div class="card-header">
 
-            <h2>Pedidos a Proveedores</h2>
-
-        </div>
-
-        <div class="pedido">
-
-            <div>
-
-                <strong>#PED-001</strong>
-
-                <p>Distribuidora Coca Cola</p>
-
-            </div>
-
-            <span class="pendiente">
-
-                Pendiente
-
-            </span>
-
-        </div>
-
-        <div class="pedido">
-
-            <div>
-
-                <strong>#PED-002</strong>
-
-                <p>Tecno Import SAC</p>
-
-            </div>
-
-            <span class="proceso">
-
-                Enviado
-
-            </span>
-
-        </div>
-
-        <div class="pedido">
-
-            <div>
-
-                <strong>#PED-003</strong>
-
-                <p>San Miguel Distribuciones</p>
-
-            </div>
-
-            <span class="entregado">
-
-                Entregado
-
-            </span>
-
-        </div>
-
-        <div class="pedido">
-
-            <div>
-
-                <strong>#PED-004</strong>
-
-                <p>Distribuidora Don Paco</p>
-
-            </div>
-
-            <span class="cancelado">
-
-                Cancelado
-
-            </span>
-
-        </div>
+        <h2>Pedidos a Proveedores</h2>
 
     </div>
 
-</div>
+    <div
+        class="pedido"
+        *ngFor="let pedido of pedidos">
+
+        <div>
+
+            <strong>{{ pedido.numero }}</strong>
+
+            <p>{{ pedido.proveedor }}</p>
+
+        </div>
+
+        <span
+            [ngClass]="{
+              'pendiente': pedido.estado === 'Pendiente',
+              'proceso': pedido.estado === 'Enviado',
+              'entregado': pedido.estado === 'Entregado',
+              'cancelado': pedido.estado === 'Cancelado'
+            }">
+
+            {{ pedido.estado }}
+
+        </span>
+
+    </div>
+
+</div> 
+
+</div> 
 
 </main>
+
+</div>
+<!-- ===================== MODAL NUEVO PROVEEDOR ===================== -->
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <h2>Nuevo Proveedor</h2>
+
+      <button class="cerrar" (click)="cerrarModal()">
+        ✖
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+     
+
+      <div class="form-group">
+
+        <label>Nombre</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoProveedorData.nombre">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Contacto</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoProveedorData.contacto">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Teléfono</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoProveedorData.telefono">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Correo</label>
+
+        <input
+          type="email"
+          [(ngModel)]="nuevoProveedorData.correo">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Dirección</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoProveedorData.direccion">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Estado</label>
+
+        <select [(ngModel)]="nuevoProveedorData.estado">
+
+          <option>Activo</option>
+          <option>Inactivo</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+    <button
+        class="btn-cancelar"
+        (click)="cerrarModal()">
+
+        Cancelar
+
+    </button>
+
+    <button
+        class="btn-guardar"
+        (click)="guardarProveedor()">
+
+        Guardar
+
+    </button>
+
+</div>
+
+  </div>
+
+</div>
+
+<!--==================== NOTIFICACIÓN ====================-->
+
+<div
+    *ngIf="mensaje"
+    class="notificacion"
+    [ngClass]="tipoMensaje">
+
+    {{ mensaje }}
 
 </div>

@@ -21,6 +21,17 @@ interface Pedido {
   estado: string;
 }
 
+interface Solicitud {
+
+  proveedor: string;
+  fecha: string;
+  producto: string;
+  cantidad: number;
+  unidad: string;
+  observaciones: string;
+
+}
+
 @Component({
   selector: 'app-proveedores',
   standalone: true,
@@ -34,6 +45,34 @@ export class Proveedores {
   constructor(private router: Router) {}
 
   buscar = '';
+
+  solicitud: Solicitud = {
+
+  proveedor: '',
+  fecha: '',
+  producto: '',
+  cantidad: 1,
+  unidad: 'Cajas',
+  observaciones: ''
+
+};
+
+  mostrarModal = false;
+  modoEdicion = false;
+
+  mensaje = '';
+
+tipoMensaje = '';
+
+nuevoProveedorData: Proveedor = {
+  codigo: '',
+  nombre: '',
+  contacto: '',
+  telefono: '',
+  correo: '',
+  direccion: '',
+  estado: 'Activo'
+};
 
   proveedorSeleccionado: Proveedor | null = null;
 
@@ -151,11 +190,127 @@ export class Proveedores {
 
   }
 
-  nuevoProveedor(){
+  nuevoProveedor() {
 
-    alert('Aquí se abrirá el formulario para registrar un nuevo proveedor.');
+  this.modoEdicion = false;
+
+  this.nuevoProveedorData = {
+    codigo: '',
+    nombre: '',
+    contacto: '',
+    telefono: '',
+    correo: '',
+    direccion: '',
+    estado: 'Activo'
+  };
+
+  this.mostrarModal = true;
+
+}
+
+cerrarModal() {
+
+  this.mostrarModal = false;
+
+}
+
+mostrarMensaje(mensaje: string, tipo: string) {
+
+  this.mensaje = mensaje;
+
+  this.tipoMensaje = tipo;
+
+  setTimeout(() => {
+
+    this.mensaje = '';
+
+    this.tipoMensaje = '';
+
+  }, 3000);
+
+}
+
+guardarProveedor() {
+
+  // Validaciones
+
+if (
+  this.nuevoProveedorData.nombre.trim() === '' ||
+  this.nuevoProveedorData.contacto.trim() === '' ||
+  this.nuevoProveedorData.telefono.trim() === '' ||
+  this.nuevoProveedorData.correo.trim() === '' ||
+  this.nuevoProveedorData.direccion.trim() === ''
+) {
+
+  alert('Todos los campos son obligatorios.');
+
+  return;
+
+}
+
+if (this.nuevoProveedorData.telefono.length !== 9) {
+
+  alert('El teléfono debe tener 9 dígitos.');
+
+  return;
+
+}
+
+const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!correoValido.test(this.nuevoProveedorData.correo)) {
+
+  alert('Ingrese un correo electrónico válido.');
+
+  return;
+
+}
+
+  if (this.modoEdicion) {
+
+    const index = this.proveedores.findIndex(
+
+      p => p.codigo === this.nuevoProveedorData.codigo
+
+    );
+
+    if (index !== -1) {
+
+      this.proveedores[index] = { ...this.nuevoProveedorData };
+
+    }
+
+  } else {
+
+   const nuevoCodigo = 'PR' + (this.proveedores.length + 1)
+  .toString()
+  .padStart(3, '0');
+
+this.proveedores.push({
+
+  codigo: nuevoCodigo,
+
+  nombre: this.nuevoProveedorData.nombre,
+  contacto: this.nuevoProveedorData.contacto,
+  telefono: this.nuevoProveedorData.telefono,
+  correo: this.nuevoProveedorData.correo,
+  direccion: this.nuevoProveedorData.direccion,
+  estado: this.nuevoProveedorData.estado
+
+});
 
   }
+
+  this.cerrarModal();
+
+  this.mostrarMensaje(
+  this.modoEdicion
+    ? 'Proveedor actualizado correctamente.'
+    : 'Proveedor registrado correctamente.',
+  'success'
+);
+
+}
 
   nuevoPedido(){
 
@@ -201,36 +356,90 @@ export class Proveedores {
 
     const confirmar = confirm('¿Desea eliminar este proveedor?');
 
-    if (confirmar) {
+   if (confirmar) {
 
-      this.proveedores = this.proveedores.filter(
+  this.proveedores = this.proveedores.filter(
 
-        p => p.codigo !== codigo
+    p => p.codigo !== codigo
 
-      );
+  );
 
-    }
+  this.mostrarMensaje(
+    'Proveedor eliminado correctamente.',
+    'success'
+  );
+
+}
 
   }
 
-  editarProveedor(proveedor: Proveedor) {
+editarProveedor(proveedor: Proveedor) {
 
-    alert('Editar proveedor: ' + proveedor.nombre);
+  this.nuevoProveedorData = { ...proveedor };
 
-  }
+  this.modoEdicion = true;
 
-  verProveedor(proveedor: Proveedor) {
+  this.mostrarModal = true;
+
+}
+
+ verProveedor(proveedor: Proveedor) {
 
     this.proveedorSeleccionado = proveedor;
 
-    alert('Visualizando información de ' + proveedor.nombre);
+}
+
+enviarSolicitud() {
+
+  if (
+    this.solicitud.proveedor.trim() === '' ||
+    this.solicitud.fecha.trim() === '' ||
+    this.solicitud.producto.trim() === '' ||
+    this.solicitud.cantidad <= 0
+  ) {
+
+    this.mostrarMensaje(
+      'Complete todos los campos de la solicitud.',
+      'error'
+    );
+
+    return;
 
   }
 
-  enviarSolicitud() {
+  const nuevoNumero = 'PED-' + (this.pedidos.length + 1)
+    .toString()
+    .padStart(3, '0');
 
-    alert('Solicitud enviada correctamente al proveedor.');
+  this.pedidos.unshift({
 
-  }
+    numero: nuevoNumero,
+    proveedor: this.solicitud.proveedor,
+    fecha: this.solicitud.fecha,
+    total: 0,
+    estado: 'Pendiente'
+
+  });
+
+  this.mostrarMensaje(
+    'Solicitud enviada correctamente.',
+    'success'
+  );
+
+  this.solicitud = {
+
+    proveedor: '',
+    fecha: '',
+    producto: '',
+    cantidad: 1,
+    unidad: 'Cajas',
+    observaciones: ''
+
+  };
 
 }
+
+
+
+  }
+
