@@ -1,0 +1,226 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { ProveedorService, Proveedor } from '../services/proveedor';
+import { PedidoService, Pedido, EstadoPedido, SolicitudCompra } from '../services/pedido';
+import { AuthService } from '../services/auth';
+
+type FiltroPedido = 'Todos' | EstadoPedido;
+
+@Component({
+  selector: 'app-proveedores',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './proveedores.html',
+  styleUrl: './proveedores.css'
+})
+export class Proveedores implements OnInit {
+
+  nombre = '';
+  rol = '';
+  busqueda = '';
+
+  // Lista de proveedores
+  proveedores: Proveedor[] = [];
+  proveedoresFiltrados: Proveedor[] = [];
+  cargandoProveedores = true;
+  proveedorSeleccionado: Proveedor | null = null;
+
+  // Modal nuevo/editar proveedor
+  mostrarModal = false;
+  modoEdicion = false;
+  proveedorActual: Proveedor = this.proveedorVacio();
+
+  // Vista de solicitud de compra
+  mostrarSolicitud = false;
+  nuevaSolicitud: SolicitudCompra = this.solicitudVacia();
+
+  // Pedidos a proveedores
+  pedidos: Pedido[] = [];
+  pedidosFiltrados: Pedido[] = [];
+  cargandoPedidos = true;
+  filtroPedido: FiltroPedido = 'Todos';
+  paginaActual = 1;
+  pedidosPorPagina = 5;
+
+  constructor(
+    private proveedorService: ProveedorService,
+    private pedidoService: PedidoService,
+    private auth: AuthService,
+    private cdr: ChangeDetectorRef,
+    public router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.nombre = this.auth.getNombre() || '';
+    this.rol = this.auth.getRol() || '';
+    this.cargarProveedores();
+    this.cargarPedidos();
+  }
+
+  // ---------- Proveedores ----------
+
+  cargarProveedores(): void {
+    this.cargandoProveedores = true;
+    this.proveedorService.obtenerTodos().subscribe({
+      next: (data) => {
+        this.proveedores = data;
+        this.proveedoresFiltrados = data;
+        this.cargandoProveedores = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoProveedores = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  filtrar(): void {
+    const term = this.busqueda.toLowerCase();
+    this.proveedoresFiltrados = this.proveedores.filter(p =>
+      p.nombre.toLowerCase().includes(term) ||
+      (p.contacto || '').toLowerCase().includes(term)
+    );
+  }
+
+  verProveedor(p: Proveedor): void {
+    this.proveedorSeleccionado = p;
+  }
+
+  abrirNuevo(): void {
+    this.proveedorActual = this.proveedorVacio();
+    this.modoEdicion = false;
+    this.mostrarModal = true;
+  }
+
+  abrirEditar(p: Proveedor): void {
+    this.proveedorActual = { ...p };
+    this.modoEdicion = true;
+    this.mostrarModal = true;
+  }
+
+  guardarProveedor(): void {
+    if (this.modoEdicion && this.proveedorActual.id) {
+      this.proveedorService.actualizar(this.proveedorActual.id, this.proveedorActual).subscribe({
+        next: () => { this.mostrarModal = false; this.cargarProveedores(); }
+      });
+    } else {
+      this.proveedorService.crear(this.proveedorActual).subscribe({
+        next: () => { this.mostrarModal = false; this.cargarProveedores(); }
+      });
+    }
+  }
+
+  eliminarProveedor(id: number): void {
+    if (confirm('¿Estás seguro de eliminar este proveedor?')) {
+      this.proveedorService.eliminar(id).subscribe({
+        next: () => {
+          if (this.proveedorSeleccionado?.id === id) this.proveedorSeleccionado = null;
+          this.cargarProveedores();
+        }
+      });
+    }
+  }
+
+  private proveedorVacio(): Proveedor {
+    return { nombre: '', contacto: '', telefono: '', correo: '', estado: 'Activo' };
+  }
+
+  // ---------- Solicitud de compra ----------
+
+  abrirSolicitud(): void {
+    this.nuevaSolicitud = this.solicitudVacia();
+    this.mostrarSolicitud = true;
+  }
+
+  cerrarSolicitud(): void {
+    this.mostrarSolicitud = false;
+  }
+
+  agregarItemSolicitud(): void {
+    this.nuevaSolicitud.productos.push({ nombre: '', cantidad: 1, unidad: 'Unidades' });
+  }
+
+  quitarItemSolicitud(index: number): void {
+    this.nuevaSolicitud.productos.splice(index, 1);
+  }
+
+  guardarSolicitud(): void {
+    this.pedidoService.crearSolicitud(this.nuevaSolicitud).subscribe({
+      next: () => {
+        this.mostrarSolicitud = false;
+        this.cargarPedidos();
+      }
+    });
+  }
+
+  private solicitudVacia(): SolicitudCompra {
+    return {
+      proveedorId: 0,
+      fechaSolicitud: new Date().toISOString().substring(0, 10),
+      observaciones: '',
+      productos: [{ nombre: '', cantidad: 1, unidad: 'Unidades' }]
+    };
+  }
+
+  // ---------- Pedidos a proveedores ----------
+
+  cargarPedidos(): void {
+    this.cargandoPedidos = true;
+    this.pedidoService.obtenerTodos().subscribe({
+      next: (data) => {
+        this.pedidos = data;
+        this.aplicarFiltroPedidos();
+        this.cargandoPedidos = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoPedidos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cambiarFiltroPedido(filtro: FiltroPedido): void {
+    this.filtroPedido = filtro;
+    this.paginaActual = 1;
+    this.aplicarFiltroPedidos();
+  }
+
+  private aplicarFiltroPedidos(): void {
+    this.pedidosFiltrados = this.filtroPedido === 'Todos'
+      ? this.pedidos
+      : this.pedidos.filter(p => p.estado === this.filtroPedido);
+  }
+
+  get pedidosPagina(): Pedido[] {
+    const inicio = (this.paginaActual - 1) * this.pedidosPorPagina;
+    return this.pedidosFiltrados.slice(inicio, inicio + this.pedidosPorPagina);
+  }
+
+  get totalPaginas(): number {
+    return Math.max(1, Math.ceil(this.pedidosFiltrados.length / this.pedidosPorPagina));
+  }
+
+  irPagina(delta: number): void {
+    const nueva = this.paginaActual + delta;
+    if (nueva >= 1 && nueva <= this.totalPaginas) this.paginaActual = nueva;
+  }
+
+  getEstadoClass(estado: EstadoPedido): string {
+    switch (estado) {
+      case 'Entregado': return 'estado-entregado';
+      case 'Enviado': return 'estado-enviado';
+      case 'Confirmado': return 'estado-confirmado';
+      case 'Cancelado': return 'estado-cancelado';
+      default: return 'estado-pendiente';
+    }
+  }
+
+  cerrarSesion(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
+}
