@@ -21,22 +21,18 @@ export class Proveedores implements OnInit {
   rol = '';
   busqueda = '';
 
-  // Lista de proveedores
   proveedores: Proveedor[] = [];
   proveedoresFiltrados: Proveedor[] = [];
   cargandoProveedores = true;
   proveedorSeleccionado: Proveedor | null = null;
 
-  // Modal nuevo/editar proveedor
   mostrarModal = false;
   modoEdicion = false;
   proveedorActual: Proveedor = this.proveedorVacio();
 
-  // Vista de solicitud de compra
   mostrarSolicitud = false;
   nuevaSolicitud: SolicitudCompra = this.solicitudVacia();
 
-  // Pedidos a proveedores
   pedidos: Pedido[] = [];
   pedidosFiltrados: Pedido[] = [];
   cargandoPedidos = true;
@@ -58,8 +54,6 @@ export class Proveedores implements OnInit {
     this.cargarProveedores();
     this.cargarPedidos();
   }
-
-  // ---------- Proveedores ----------
 
   cargarProveedores(): void {
     this.cargandoProveedores = true;
@@ -128,8 +122,6 @@ export class Proveedores implements OnInit {
     return { nombre: '', contacto: '', telefono: '', correo: '', estado: 'Activo' };
   }
 
-  // ---------- Solicitud de compra ----------
-
   abrirSolicitud(): void {
     this.nuevaSolicitud = this.solicitudVacia();
     this.mostrarSolicitud = true;
@@ -164,8 +156,6 @@ export class Proveedores implements OnInit {
       productos: [{ nombre: '', cantidad: 1, unidad: 'Unidades' }]
     };
   }
-
-  // ---------- Pedidos a proveedores ----------
 
   cargarPedidos(): void {
     this.cargandoPedidos = true;
