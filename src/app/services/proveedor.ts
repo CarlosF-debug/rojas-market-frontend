@@ -2,17 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export type EstadoProveedor = 'ACTIVO' | 'INACTIVO';
+
 export interface Proveedor {
   id?: number;
   codigo?: string;
   nombre: string;
-  ruc?: string;
-  contacto: string;
-  telefono: string;
-  correo: string;
+  telefono?: string;
   direccion?: string;
+  correo?: string;
+  ruc?: string;
+  contacto?: string;
   productosSuministrados?: string;
-  estado: 'Activo' | 'Inactivo';
+  estado: EstadoProveedor;
 }
 
 @Injectable({ providedIn: 'root' })

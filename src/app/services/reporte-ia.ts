@@ -2,15 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export type EstadoAlerta = 'Crítico' | 'Bajo' | 'Urgente' | 'Normal';
+export type NivelRiesgo = 'BAJO' | 'MEDIO' | 'ALTO' | 'CRITICO';
 
 export interface AlertaInventario {
+  id?: number;
+  mensaje: string;
+  nivelRiesgo: NivelRiesgo;
+  fechaAlerta?: string;
+  leida?: boolean;
   productoId?: number;
   productoNombre: string;
   stockActual: number;
   stockMinimo: number;
-  prediccionIA: string;
-  estado: EstadoAlerta;
 }
 
 export interface ResumenReporteIA {
@@ -24,17 +27,16 @@ export interface ResumenReporteIA {
 @Injectable({ providedIn: 'root' })
 export class ReporteIaService {
 
-  private api = 'http://localhost:8080/api/reportes-ia';
+  private apiAlertas = 'http://localhost:8080/api/alertas';
+  private apiResumen = 'http://localhost:8080/api/reportes-ia/resumen';
 
   constructor(private http: HttpClient) {}
 
-  obtenerResumen(desde?: string, hasta?: string): Observable<ResumenReporteIA> {
-    let url = `${this.api}/resumen`;
-    if (desde && hasta) url += `?desde=${desde}&hasta=${hasta}`;
-    return this.http.get<ResumenReporteIA>(url);
+  obtenerResumen(): Observable<ResumenReporteIA> {
+    return this.http.get<ResumenReporteIA>(this.apiResumen);
   }
 
   obtenerAlertas(): Observable<AlertaInventario[]> {
-    return this.http.get<AlertaInventario[]>(`${this.api}/alertas`);
+    return this.http.get<AlertaInventario[]>(this.apiAlertas);
   }
 }

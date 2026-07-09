@@ -1,6 +1,5 @@
 <div class="layout">
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">🛒</div>
@@ -55,10 +54,8 @@
     </div>
   </aside>
 
-  <!-- Contenido -->
   <main class="contenido">
 
-    <!-- Topbar -->
     <div class="topbar">
       <div class="busqueda">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
@@ -78,7 +75,6 @@
       </div>
     </div>
 
-    <!-- Encabezado -->
     <div class="encabezado">
       <div>
         <h1>Proveedores</h1>
@@ -87,7 +83,6 @@
       <button class="btn-nuevo" (click)="abrirNuevo()">+ Nuevo Proveedor</button>
     </div>
 
-    <!-- Lista + Panel info -->
     <div class="grid-superior">
 
       <div class="tabla-container">
@@ -117,8 +112,8 @@
               <td>{{ p.telefono }}</td>
               <td>{{ p.correo }}</td>
               <td>
-                <span [class]="'badge-estado ' + (p.estado === 'Activo' ? 'activo' : 'inactivo')">
-                  {{ p.estado }}
+                <span [class]="'badge-estado ' + (p.estado === 'ACTIVO' ? 'activo' : 'inactivo')">
+                  {{ getEstadoLabel(p.estado) }}
                 </span>
               </td>
               <td>
@@ -136,7 +131,6 @@
         </table>
       </div>
 
-      <!-- Panel de información del proveedor -->
       <div class="panel-info">
         <h3>Información del Proveedor</h3>
 
@@ -176,10 +170,8 @@
 
     </div>
 
-    <!-- Solicitudes + Pedidos -->
     <div class="grid-inferior">
 
-      <!-- Nueva Solicitud de Compra -->
       <div class="panel-solicitud" *ngIf="mostrarSolicitud">
         <div class="panel-solicitud-header">
           <button class="btn-volver" (click)="cerrarSolicitud()">← Volver</button>
@@ -237,7 +229,6 @@
         <button class="btn-nuevo" (click)="abrirSolicitud()">+ Nueva Solicitud de Compra</button>
       </div>
 
-      <!-- Pedidos a proveedores -->
       <div class="panel-pedidos">
         <div class="panel-pedidos-header">
           <div>
@@ -249,11 +240,11 @@
 
         <div class="tabs-estado">
           <button class="tab" [class.activo]="filtroPedido === 'Todos'" (click)="cambiarFiltroPedido('Todos')">Todos</button>
-          <button class="tab" [class.activo]="filtroPedido === 'Pendiente'" (click)="cambiarFiltroPedido('Pendiente')">Pendiente</button>
-          <button class="tab" [class.activo]="filtroPedido === 'Enviado'" (click)="cambiarFiltroPedido('Enviado')">Enviado</button>
-          <button class="tab" [class.activo]="filtroPedido === 'Confirmado'" (click)="cambiarFiltroPedido('Confirmado')">Confirmado</button>
-          <button class="tab" [class.activo]="filtroPedido === 'Entregado'" (click)="cambiarFiltroPedido('Entregado')">Entregado</button>
-          <button class="tab" [class.activo]="filtroPedido === 'Cancelado'" (click)="cambiarFiltroPedido('Cancelado')">Cancelado</button>
+          <button class="tab" [class.activo]="filtroPedido === 'PENDIENTE'" (click)="cambiarFiltroPedido('PENDIENTE')">Pendiente</button>
+          <button class="tab" [class.activo]="filtroPedido === 'ENVIADO'" (click)="cambiarFiltroPedido('ENVIADO')">Enviado</button>
+          <button class="tab" [class.activo]="filtroPedido === 'CONFIRMADO'" (click)="cambiarFiltroPedido('CONFIRMADO')">Confirmado</button>
+          <button class="tab" [class.activo]="filtroPedido === 'ENTREGADO'" (click)="cambiarFiltroPedido('ENTREGADO')">Entregado</button>
+          <button class="tab" [class.activo]="filtroPedido === 'CANCELADO'" (click)="cambiarFiltroPedido('CANCELADO')">Cancelado</button>
         </div>
 
         <div class="cargando" *ngIf="cargandoPedidos"><p>Cargando pedidos...</p></div>
@@ -275,11 +266,19 @@
               <td>{{ ped.proveedorNombre }}</td>
               <td>{{ ped.fecha }}</td>
               <td class="precio">S/ {{ ped.total | number:'1.2-2' }}</td>
-              <td><span [class]="'badge-estado-pedido ' + getEstadoClass(ped.estado)">{{ ped.estado }}</span></td>
+              <td>
+                <select [value]="ped.estado" (change)="cambiarEstadoPedido(ped, $any($event.target).value)" [class]="'badge-estado-pedido ' + getEstadoClass(ped.estado)">
+                  <option value="PENDIENTE">Pendiente</option>
+                  <option value="ENVIADO">Enviado</option>
+                  <option value="CONFIRMADO">Confirmado</option>
+                  <option value="ENTREGADO">Entregado</option>
+                  <option value="CANCELADO">Cancelado</option>
+                </select>
+              </td>
               <td>
                 <div class="acciones">
-                  <button class="btn-icono">👁️</button>
-                  <button class="btn-icono">🖨️</button>
+                  <button class="btn-icono" (click)="verDetallePedido(ped)">👁️</button>
+                  <button class="btn-icono" (click)="imprimirPedido(ped)">🖨️</button>
                 </div>
               </td>
             </tr>
@@ -302,7 +301,6 @@
   </main>
 </div>
 
-<!-- Modal nuevo/editar proveedor -->
 <div class="modal-overlay" *ngIf="mostrarModal" (click)="mostrarModal = false">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -322,8 +320,8 @@
         <div class="campo">
           <label>Estado</label>
           <select [(ngModel)]="proveedorActual.estado">
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
+            <option value="ACTIVO">Activo</option>
+            <option value="INACTIVO">Inactivo</option>
           </select>
         </div>
       </div>
@@ -355,6 +353,49 @@
       <button class="btn-guardar" (click)="guardarProveedor()">
         {{ modoEdicion ? 'Actualizar' : 'Crear Proveedor' }}
       </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarDetallePedido" (click)="cerrarDetallePedido()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Detalle del Pedido {{ detallePedido?.pedidoNumero }}</h3>
+      <button (click)="cerrarDetallePedido()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="cargando" *ngIf="cargandoDetalle">
+        <p>Cargando especificaciones de la solicitud...</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoDetalle && detallePedido">
+        <div class="info-detalles-solicitud">
+          <p><strong>Proveedor:</strong> {{ detallePedido.proveedorNombre }}</p>
+          <p><strong>Fecha de Solicitud:</strong> {{ detallePedido.fechaSolicitud }}</p>
+          <p *ngIf="detallePedido.observaciones"><strong>Observaciones:</strong> {{ detallePedido.observaciones }}</p>
+        </div>
+
+        <h4 style="margin-top: 15px; margin-bottom: 10px;">Productos Requeridos</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Unidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of detallePedido.productos">
+              <td>{{ prod.nombre }}</td>
+              <td>{{ prod.cantidad }}</td>
+              <td>{{ prod.unidad }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="cerrarDetallePedido()">Cerrar</button>
     </div>
   </div>
 </div>

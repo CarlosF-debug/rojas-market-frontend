@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export type EstadoPedido = 'Pendiente' | 'Enviado' | 'Confirmado' | 'Entregado' | 'Cancelado';
+export type EstadoPedido = 'PENDIENTE' | 'ENVIADO' | 'CONFIRMADO' | 'ENTREGADO' | 'CANCELADO';
 
 export interface Pedido {
   id?: number;
@@ -15,7 +15,7 @@ export interface Pedido {
 }
 
 export interface ItemSolicitud {
-  productoId?: number;
+  id?: number;
   nombre: string;
   cantidad: number;
   unidad: string;
@@ -24,8 +24,11 @@ export interface ItemSolicitud {
 export interface SolicitudCompra {
   id?: number;
   proveedorId: number;
-  fechaSolicitud: string;
+  proveedorNombre?: string;
+  fechaSolicitud?: string;
   observaciones?: string;
+  pedidoId?: number;
+  pedidoNumero?: string;
   productos: ItemSolicitud[];
 }
 
@@ -55,5 +58,9 @@ export class PedidoService {
 
   crearSolicitud(solicitud: SolicitudCompra): Observable<SolicitudCompra> {
     return this.http.post<SolicitudCompra>(this.apiSolicitudes, solicitud);
+  }
+
+  obtenerSolicitudPorPedido(pedidoId: number): Observable<SolicitudCompra> {
+    return this.http.get<SolicitudCompra>(`${this.apiSolicitudes}/pedido/${pedidoId}`);
   }
 }

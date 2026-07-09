@@ -39,6 +39,9 @@ export class Proveedores implements OnInit {
   filtroPedido: FiltroPedido = 'Todos';
   paginaActual = 1;
   pedidosPorPagina = 5;
+  mostrarDetallePedido = false;
+  detallePedido: SolicitudCompra | null = null;
+  cargandoDetalle = false;
 
   constructor(
     private proveedorService: ProveedorService,
@@ -119,7 +122,7 @@ export class Proveedores implements OnInit {
   }
 
   private proveedorVacio(): Proveedor {
-    return { nombre: '', contacto: '', telefono: '', correo: '', estado: 'Activo' };
+    return { nombre: '', contacto: '', telefono: '', correo: '', estado: 'ACTIVO' };
   }
 
   abrirSolicitud(): void {
@@ -199,14 +202,85 @@ export class Proveedores implements OnInit {
     if (nueva >= 1 && nueva <= this.totalPaginas) this.paginaActual = nueva;
   }
 
+  verDetallePedido(ped: Pedido): void {
+    this.mostrarDetallePedido = true;
+    this.detallePedido = null;
+    this.cargandoDetalle = true;
+    this.pedidoService.obtenerSolicitudPorPedido(ped.id!).subscribe({
+      next: (data) => {
+        this.detallePedido = data;
+        this.cargandoDetalle = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoDetalle = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cerrarDetallePedido(): void {
+    this.mostrarDetallePedido = false;
+    this.detallePedido = null;
+  }
+
+  cambiarEstadoPedido(ped: Pedido, nuevoEstado: string): void {
+    this.pedidoService.actualizarEstado(ped.id!, nuevoEstado as EstadoPedido).subscribe({
+      next: () => this.cargarPedidos()
+    });
+  }
+
+  imprimirPedido(ped: Pedido): void {
+    const contenido = `
+      <html>
+        <head>
+          <title>Pedido ${ped.numero}</title>
+          <style>
+            body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #1a1a2e; }
+            h1 { color: #c0392b; margin-bottom: 0; }
+            h2 { color: #555; font-weight: 400; margin-top: 4px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+            td { padding: 10px 0; border-bottom: 1px solid #eee; }
+            td:first-child { font-weight: 600; width: 160px; }
+          </style>
+        </head>
+        <body>
+          <h1>Rojas Market</h1>
+          <h2>Comprobante de Pedido ${ped.numero}</h2>
+          <table>
+            <tr><td>Proveedor</td><td>${ped.proveedorNombre}</td></tr>
+            <tr><td>Fecha</td><td>${ped.fecha}</td></tr>
+            <tr><td>Estado</td><td>${this.getEstadoLabel(ped.estado)}</td></tr>
+            <tr><td>Total</td><td>S/ ${ped.total.toFixed(2)}</td></tr>
+          </table>
+        </body>
+      </html>`;
+    const ventana = window.open('', '_blank', 'width=600,height=700');
+    if (ventana) {
+      ventana.document.write(contenido);
+      ventana.document.close();
+      ventana.focus();
+      ventana.print();
+    }
+  }
+
   getEstadoClass(estado: EstadoPedido): string {
     switch (estado) {
-      case 'Entregado': return 'estado-entregado';
-      case 'Enviado': return 'estado-enviado';
-      case 'Confirmado': return 'estado-confirmado';
-      case 'Cancelado': return 'estado-cancelado';
+      case 'ENTREGADO': return 'estado-entregado';
+      case 'ENVIADO': return 'estado-enviado';
+      case 'CONFIRMADO': return 'estado-confirmado';
+      case 'CANCELADO': return 'estado-cancelado';
       default: return 'estado-pendiente';
     }
+  }
+
+  getEstadoLabel(estado: string): string {
+    const labels: Record<string, string> = {
+      ACTIVO: 'Activo', INACTIVO: 'Inactivo',
+      PENDIENTE: 'Pendiente', ENVIADO: 'Enviado',
+      CONFIRMADO: 'Confirmado', ENTREGADO: 'Entregado', CANCELADO: 'Cancelado'
+    };
+    return labels[estado] || estado;
   }
 
   cerrarSesion(): void {
