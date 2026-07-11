@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 // ===================== TYPES =====================
 
@@ -17,15 +18,29 @@ interface CartItem {
   qty: number;
 }
 
-type PaymentMethod = 'efectivo' | 'tarjeta' | 'yape';
+type PaymentMethod = 'efectivo' | 'yape';
 
 @Component({
   selector: 'app-ventas',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './ventas.html',
   styleUrl: './ventas.css',
 })
 export class Ventas {
+
+  constructor(public router: Router) {}
+
+  // ===================== SIDEBAR / TOPBAR =====================
+
+  nombre = 'Carlos Fajardo';
+  rol = 'ADMINISTRADOR';
+  busqueda = '';
+
+  cerrarSesion(): void {
+    // TODO: conectar con tu AuthService real (auth.service.ts)
+    alert('Cerrando sesión...');
+    this.router.navigate(['/login']);
+  }
 
   // ===================== DATA =====================
 
