@@ -1,4 +1,4 @@
-:root {
+:host {
   --red-900: #7f1d1d;
   --red-800: #8b1c1c;
   --red-700: #a91f1f;
@@ -21,16 +21,14 @@
   --radius: 12px;
   --shadow: 0 1px 3px rgba(20, 20, 40, 0.06), 0 1px 2px rgba(20,20,40,0.04);
   --shadow-md: 0 4px 14px rgba(20, 20, 40, 0.08);
-}
 
-* { box-sizing: border-box; }
-
-:host {
   display: block;
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: var(--gray-100);
   color: var(--gray-900);
 }
+
+* { box-sizing: border-box; }
 
 .content {
   display: grid;
