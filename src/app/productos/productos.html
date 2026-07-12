@@ -100,6 +100,19 @@
       <button class="btn-revisar">Revisar Críticos</button>
     </div>
 
+    <!-- Filtro por categorías -->
+    <div class="filtro-categorias">
+      <button class="chip-categoria" [class.activo]="categoriaFiltro === 'todas'"
+        (click)="cambiarFiltroCategoria('todas')">
+        Todas
+      </button>
+      <button class="chip-categoria" *ngFor="let cat of categorias"
+        [class.activo]="categoriaFiltro === cat.id"
+        (click)="cambiarFiltroCategoria(cat.id!)">
+        {{ cat.nombre }}
+      </button>
+    </div>
+
     <!-- Tabla de productos -->
     <div class="tabla-container">
       <div class="tabla-header">
@@ -151,6 +164,9 @@
               </div>
             </td>
           </tr>
+          <tr *ngIf="productosFiltrados.length === 0">
+            <td colspan="5" class="sin-datos">No se encontraron productos con ese filtro.</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -173,6 +189,13 @@
       <div class="campo">
         <label>Descripción</label>
         <input type="text" [(ngModel)]="productoActual.descripcion" placeholder="Descripción opcional" />
+      </div>
+      <div class="campo">
+        <label>Categoría</label>
+        <select [(ngModel)]="productoActual.categoriaId">
+          <option [value]="undefined">Sin categoría</option>
+          <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+        </select>
       </div>
       <div class="fila-doble">
         <div class="campo">

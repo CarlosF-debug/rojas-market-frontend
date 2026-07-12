@@ -28,6 +28,7 @@ export class AuthService {
         localStorage.setItem('token', res.token);
         localStorage.setItem('nombre', res.nombre);
         localStorage.setItem('rol', res.rol);
+        localStorage.setItem('correo', res.correo);
       })
     );
   }
@@ -46,6 +47,10 @@ export class AuthService {
 
   getRol(): string | null {
     return localStorage.getItem('rol');
+  }
+
+  getCorreo(): string | null {
+    return localStorage.getItem('correo');
   }
 
   isLoggedIn(): boolean {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ProductoService, Producto } from '../services/producto';
+import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
 
 @Component({
@@ -24,8 +25,12 @@ export class Productos implements OnInit {
   modoEdicion = false;
   productoActual: Producto = this.productoVacio();
 
+  categorias: Categoria[] = [];
+  categoriaFiltro: number | 'todas' = 'todas';
+
   constructor(
     private productoService: ProductoService,
+    private categoriaService: CategoriaService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
     public router: Router
@@ -35,13 +40,14 @@ export class Productos implements OnInit {
     this.nombre = this.auth.getNombre() || '';
     this.rol = this.auth.getRol() || '';
     this.cargarProductos();
+    this.cargarCategorias();
   }
 
   cargarProductos(): void {
     this.productoService.obtenerTodos().subscribe({
       next: (data) => {
         this.productos = data;
-        this.productosFiltrados = data;
+        this.aplicarFiltros();
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -52,11 +58,38 @@ export class Productos implements OnInit {
     });
   }
 
+  cargarCategorias(): void {
+    this.categoriaService.obtenerTodas().subscribe({
+      next: (data) => {
+        this.categorias = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   filtrar(): void {
-    const term = this.busqueda.toLowerCase();
-    this.productosFiltrados = this.productos.filter(p =>
-      p.nombre.toLowerCase().includes(term)
-    );
+    this.aplicarFiltros();
+  }
+
+  cambiarFiltroCategoria(id: number | 'todas'): void {
+    this.categoriaFiltro = id;
+    this.aplicarFiltros();
+  }
+
+  private aplicarFiltros(): void {
+    const term = this.busqueda.toLowerCase().trim();
+
+    this.productosFiltrados = this.productos.filter(p => {
+      const coincideTexto = !term ||
+        p.nombre.toLowerCase().includes(term) ||
+        (p.descripcion || '').toLowerCase().includes(term) ||
+        (p.categoriaNombre || '').toLowerCase().includes(term);
+
+      const coincideCategoria = this.categoriaFiltro === 'todas' ||
+        p.categoriaId === this.categoriaFiltro;
+
+      return coincideTexto && coincideCategoria;
+    });
   }
 
   abrirNuevo(): void {
