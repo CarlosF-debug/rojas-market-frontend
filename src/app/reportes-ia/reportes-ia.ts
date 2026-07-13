@@ -66,6 +66,20 @@ export class ReportesIa implements OnInit {
     });
   }
 
+  descargarInforme(): void {
+    this.reporteService.descargarExcel().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.download = 'informe-rojas-market.xlsx';
+        enlace.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => alert('No se pudo generar el informe. Intenta nuevamente.')
+    });
+  }
+
   getEstadoClass(nivel: NivelRiesgo): string {
     switch (nivel) {
       case 'CRITICO': return 'estado-critico';

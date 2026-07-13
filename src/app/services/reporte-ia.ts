@@ -39,4 +39,8 @@ export class ReporteIaService {
   obtenerAlertas(): Observable<AlertaInventario[]> {
     return this.http.get<AlertaInventario[]>(this.apiAlertas);
   }
+
+  descargarExcel(): Observable<Blob> {
+    return this.http.get('http://localhost:8080/api/reportes-ia/excel', { responseType: 'blob' });
+  }
 }

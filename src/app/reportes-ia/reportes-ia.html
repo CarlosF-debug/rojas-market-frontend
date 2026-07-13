@@ -1,6 +1,5 @@
 <div class="layout">
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">🛒</div>
@@ -55,10 +54,8 @@
     </div>
   </aside>
 
-  <!-- Contenido -->
   <main class="contenido">
 
-    <!-- Topbar -->
     <div class="topbar">
       <div class="busqueda">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
@@ -83,7 +80,6 @@
       </div>
     </div>
 
-    <!-- Encabezado -->
     <div class="encabezado">
       <div class="encabezado-titulo">
         <span class="icono-titulo">🤖</span>
@@ -93,11 +89,11 @@
         </div>
       </div>
       <div class="filtro-fechas">
+        <button class="btn-descargar" (click)="descargarInforme()">⬇ Descargar Informe Excel</button>
         <button class="btn-actualizar" (click)="actualizarDatos()">⟳ Actualizar datos</button>
       </div>
     </div>
 
-    <!-- Tarjetas KPI -->
     <div class="tarjetas">
       <div class="tarjeta">
         <div class="tarjeta-icono">⚠️</div>
@@ -136,7 +132,6 @@
       </div>
     </div>
 
-    <!-- Alertas de inventario -->
     <div class="tabla-container">
       <div class="tabla-header">
         <h2>Alertas de Inventario (IA) <span class="badge-total">{{ alertas.length }} Total</span></h2>
