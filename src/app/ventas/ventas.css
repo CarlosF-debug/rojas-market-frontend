@@ -198,8 +198,8 @@
   font-size: 14px;
 }
 
-.icon-barcode { opacity: 0.45; }
-.icon-search { opacity: 0.5; font-size: 14px; }
+.icon-barcode { display: flex; align-items: center; color: var(--gray-500); opacity: 0.7; }
+.icon-search { display: flex; align-items: center; color: var(--gray-500); opacity: 0.7; }
 
 .category-select {
   border: 1px solid var(--gray-200);
@@ -222,6 +222,13 @@
 .products-header h2 {
   margin: 0;
   font-size: 16px;
+}
+
+.cargando {
+  text-align: center;
+  color: var(--gray-500);
+  padding: 40px 0;
+  font-size: 13px;
 }
 
 .pill {
@@ -268,8 +275,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
   margin-bottom: 10px;
+  color: var(--gray-300);
+}
+
+.product-img img {
+  max-height: 72px;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .product-name {
@@ -359,6 +372,9 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .cart-table {
@@ -396,7 +412,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+
+.product-cell-img img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 .product-cell-name {
@@ -434,7 +458,10 @@
   border: none;
   color: var(--red-600);
   cursor: pointer;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
 }
 
 .cart-empty {
@@ -515,7 +542,7 @@
   font-weight: 600;
 }
 
-.pay-icon { font-size: 18px; }
+.pay-icon { display: flex; align-items: center; justify-content: center; }
 
 .pay-method.active {
   border-color: var(--red-500);

@@ -1,20 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ProductoService, Producto } from '../services/producto';
+import { AuthService } from '../services/auth';
 
 // ===================== TYPES =====================
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  emoji: string;
-}
-
 interface CartItem {
-  product: Product;
+  product: Producto;
   qty: number;
 }
 
@@ -22,46 +16,99 @@ type PaymentMethod = 'efectivo' | 'yape';
 
 @Component({
   selector: 'app-ventas',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './ventas.html',
   styleUrl: './ventas.css',
 })
-export class Ventas {
+export class Ventas implements OnInit {
 
-  constructor(public router: Router) {}
+  constructor(
+    private productoService: ProductoService,
+    private auth: AuthService,
+    private cdr: ChangeDetectorRef,
+    public router: Router
+  ) {}
 
   // ===================== SIDEBAR / TOPBAR =====================
 
-  nombre = 'Carlos Fajardo';
-  rol = 'ADMINISTRADOR';
+  nombre = '';
+  rol = '';
   busqueda = '';
 
+  ngOnInit(): void {
+    this.nombre = this.auth.getNombre() || '';
+    this.rol = this.auth.getRol() || '';
+    this.cargarProductos();
+  }
+
   cerrarSesion(): void {
-    // TODO: conectar con tu AuthService real (auth.service.ts)
-    alert('Cerrando sesión...');
+    this.auth.logout();
     this.router.navigate(['/login']);
   }
 
-  // ===================== DATA =====================
+  // ===================== PRODUCTS (desde la base de datos) =====================
 
-  products: Product[] = [
-    { id: 'p1', name: 'Coca Cola 500ml', price: 3.50, stock: 120, emoji: '🥤' },
-    { id: 'p2', name: 'Inca Kola 500ml', price: 3.50, stock: 85, emoji: '🥤' },
-    { id: 'p3', name: 'Agua Cielo 1L', price: 2.20, stock: 60, emoji: '💧' },
-    { id: 'p4', name: 'Galletas Oreo 126g', price: 4.50, stock: 45, emoji: '🍪' },
-    { id: 'p5', name: 'Papas Lays Clásicas', price: 6.00, stock: 35, emoji: '🍟' },
-    { id: 'p6', name: 'Leche Gloria 1L', price: 4.20, stock: 50, emoji: '🥛' },
-    { id: 'p7', name: 'Arroz Extra 1kg', price: 4.80, stock: 40, emoji: '🍚' },
-    { id: 'p8', name: 'Azúcar Blanca 1kg', price: 3.20, stock: 55, emoji: '🧂' },
-    { id: 'p9', name: 'Atún Florida 170g', price: 4.00, stock: 25, emoji: '🥫' },
-    { id: 'p10', name: 'Fideos Don Vittorio', price: 2.50, stock: 70, emoji: '🍝' },
-    { id: 'p11', name: 'Aceite Primor 1L', price: 6.90, stock: 30, emoji: '🫙' },
-    { id: 'p12', name: 'Detergente Ariel 1kg', price: 8.90, stock: 20, emoji: '🧴' },
-  ];
+  productos: Producto[] = [];
+  cargando = true;
+
+  cargarProductos(): void {
+    this.cargando = true;
+    this.productoService.obtenerTodos().subscribe({
+      next: (data) => {
+        this.productos = data;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Helper para mostrar foto del producto si tu backend la envía (campo opcional,
+  // aún no existe en tu interfaz Producto). Si no hay imagen, se muestra un ícono genérico.
+  getImagen(p: Producto): string | undefined {
+    return (p as any).imagenUrl;
+  }
 
   productsPerPage = 12;
   currentPage = 1;
   searchTerm = '';
+
+  get filteredProducts(): Producto[] {
+    return this.productos.filter((p) =>
+      p.nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+  get paginatedProducts(): Producto[] {
+    const start = (this.currentPage - 1) * this.productsPerPage;
+    return this.filteredProducts.slice(start, start + this.productsPerPage);
+  }
+
+  get totalPages(): number[] {
+    const pages = Math.ceil(this.filteredProducts.length / this.productsPerPage) || 1;
+    return Array.from({ length: pages }, (_, i) => i + 1);
+  }
+
+  onSearchChange(value: string): void {
+    this.searchTerm = value;
+    this.currentPage = 1;
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) this.currentPage -= 1;
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages.length) this.currentPage += 1;
+  }
 
   // ===================== CART STATE =====================
 
@@ -73,28 +120,12 @@ export class Ventas {
 
   // ===================== COMPUTED (getters) =====================
 
-  get filteredProducts(): Product[] {
-    return this.products.filter((p) =>
-      p.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-  }
-
-  get paginatedProducts(): Product[] {
-    const start = (this.currentPage - 1) * this.productsPerPage;
-    return this.filteredProducts.slice(start, start + this.productsPerPage);
-  }
-
-  get totalPages(): number[] {
-    const pages = Math.ceil(this.filteredProducts.length / this.productsPerPage) || 1;
-    return Array.from({ length: pages }, (_, i) => i + 1);
-  }
-
   get totalItems(): number {
     return this.cart.reduce((sum, item) => sum + item.qty, 0);
   }
 
   get subtotal(): number {
-    return this.cart.reduce((sum, item) => sum + item.product.price * item.qty, 0);
+    return this.cart.reduce((sum, item) => sum + item.product.precio * item.qty, 0);
   }
 
   get total(): number {
@@ -125,31 +156,33 @@ export class Ventas {
 
   // ===================== CART ACTIONS =====================
 
-  addToCart(product: Product): void {
-    const existing = this.cart.find((item) => item.product.id === product.id);
+  addToCart(producto: Producto): void {
+    if (producto.stock <= 0) return; // no permitir vender productos agotados
+
+    const existing = this.cart.find((item) => item.product.id === producto.id);
     if (existing) {
-      existing.qty += 1;
+      if (existing.qty < producto.stock) existing.qty += 1;
     } else {
-      this.cart.push({ product, qty: 1 });
+      this.cart.push({ product: producto, qty: 1 });
     }
   }
 
-  increaseQty(productId: string): void {
-    const item = this.cart.find((i) => i.product.id === productId);
-    if (item) item.qty += 1;
+  increaseQty(id: number | undefined): void {
+    const item = this.cart.find((i) => i.product.id === id);
+    if (item && item.qty < item.product.stock) item.qty += 1;
   }
 
-  decreaseQty(productId: string): void {
-    const item = this.cart.find((i) => i.product.id === productId);
+  decreaseQty(id: number | undefined): void {
+    const item = this.cart.find((i) => i.product.id === id);
     if (!item) return;
     item.qty -= 1;
     if (item.qty <= 0) {
-      this.removeFromCart(productId);
+      this.removeFromCart(id);
     }
   }
 
-  removeFromCart(productId: string): void {
-    this.cart = this.cart.filter((i) => i.product.id !== productId);
+  removeFromCart(id: number | undefined): void {
+    this.cart = this.cart.filter((i) => i.product.id !== id);
   }
 
   clearCart(): void {
@@ -157,7 +190,7 @@ export class Ventas {
   }
 
   lineSubtotal(item: CartItem): number {
-    return item.product.price * item.qty;
+    return item.product.precio * item.qty;
   }
 
   // ===================== PAYMENT =====================
@@ -188,25 +221,6 @@ export class Ventas {
     this.paidAmount = current;
   }
 
-  // ===================== SEARCH / PAGINATION =====================
-
-  onSearchChange(value: string): void {
-    this.searchTerm = value;
-    this.currentPage = 1;
-  }
-
-  goToPage(page: number): void {
-    this.currentPage = page;
-  }
-
-  prevPage(): void {
-    if (this.currentPage > 1) this.currentPage -= 1;
-  }
-
-  nextPage(): void {
-    if (this.currentPage < this.totalPages.length) this.currentPage += 1;
-  }
-
   // ===================== PROCESS SALE =====================
 
   processSale(): void {
@@ -221,6 +235,9 @@ export class Ventas {
     this.clearCart();
     this.paidAmount = '0.00';
     this.discount = 0;
+
+    // Refresca el stock desde el backend después de vender
+    this.cargarProductos();
   }
 
   // ===================== DATE / TIME =====================
