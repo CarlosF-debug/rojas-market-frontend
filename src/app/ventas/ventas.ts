@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ProductoService, Producto } from '../services/producto';
 import { AuthService } from '../services/auth';
 
@@ -79,7 +80,7 @@ export class Ventas implements OnInit {
 
   get filteredProducts(): Producto[] {
     return this.productos.filter((p) =>
-      p.nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
+      (p.nombre || '').toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
 
@@ -117,6 +118,7 @@ export class Ventas implements OnInit {
   discount = 0;
   paidAmount = '0.00';
   activePaymentMethod: PaymentMethod = 'efectivo';
+  procesando = false;
 
   // ===================== COMPUTED (getters) =====================
 
@@ -224,20 +226,39 @@ export class Ventas implements OnInit {
   // ===================== PROCESS SALE =====================
 
   processSale(): void {
-    if (this.isCartEmpty) return;
+    if (this.isCartEmpty || this.procesando) return;
 
     if (this.activePaymentMethod === 'efectivo' && this.parseAmount(this.paidAmount) < this.total) {
       alert('El monto pagado es menor al total de la venta.');
       return;
     }
 
-    alert(`Venta procesada por ${this.formatCurrency(this.total)}. ¡Gracias!`);
-    this.clearCart();
-    this.paidAmount = '0.00';
-    this.discount = 0;
+    this.procesando = true;
 
-    // Refresca el stock desde el backend después de vender
-    this.cargarProductos();
+    // Por cada producto en el carrito, resta la cantidad vendida de su stock actual
+    // y envía la actualización a la base de datos.
+    const actualizaciones = this.cart.map((item) => {
+      const productoActualizado: Producto = {
+        ...item.product,
+        stock: item.product.stock - item.qty,
+      };
+      return this.productoService.actualizar(item.product.id!, productoActualizado);
+    });
+
+    forkJoin(actualizaciones).subscribe({
+      next: () => {
+        alert(`Venta procesada por ${this.formatCurrency(this.total)}. ¡Gracias!`);
+        this.clearCart();
+        this.paidAmount = '0.00';
+        this.discount = 0;
+        this.procesando = false;
+        this.cargarProductos(); // refresca el stock real desde el backend
+      },
+      error: () => {
+        alert('Ocurrió un error al descontar el stock. Verifica tu conexión con el servidor e inténtalo de nuevo.');
+        this.procesando = false;
+      },
+    });
   }
 
   // ===================== DATE / TIME =====================
