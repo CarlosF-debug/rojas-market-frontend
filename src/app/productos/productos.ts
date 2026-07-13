@@ -6,6 +6,8 @@ import { ProductoService, Producto } from '../services/producto';
 import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
 
+type EstadoStock = 'normal' | 'bajo' | 'agotado';
+
 @Component({
   selector: 'app-productos',
   standalone: true,
@@ -26,7 +28,9 @@ export class Productos implements OnInit {
   productoActual: Producto = this.productoVacio();
 
   categorias: Categoria[] = [];
-  categoriaFiltro: number | 'todas' = 'todas';
+  categoriasSeleccionadas: number[] = [];
+  estadosStockSeleccionados: EstadoStock[] = [];
+  mostrarPanelFiltros = false;
 
   constructor(
     private productoService: ProductoService,
@@ -71,9 +75,43 @@ export class Productos implements OnInit {
     this.aplicarFiltros();
   }
 
-  cambiarFiltroCategoria(id: number | 'todas'): void {
-    this.categoriaFiltro = id;
+  togglePanelFiltros(): void {
+    this.mostrarPanelFiltros = !this.mostrarPanelFiltros;
+  }
+
+  toggleCategoriaFiltro(id: number): void {
+    const idx = this.categoriasSeleccionadas.indexOf(id);
+    if (idx >= 0) this.categoriasSeleccionadas.splice(idx, 1);
+    else this.categoriasSeleccionadas.push(id);
     this.aplicarFiltros();
+  }
+
+  toggleEstadoStockFiltro(estado: EstadoStock): void {
+    const idx = this.estadosStockSeleccionados.indexOf(estado);
+    if (idx >= 0) this.estadosStockSeleccionados.splice(idx, 1);
+    else this.estadosStockSeleccionados.push(estado);
+    this.aplicarFiltros();
+  }
+
+  limpiarFiltros(): void {
+    this.categoriasSeleccionadas = [];
+    this.estadosStockSeleccionados = [];
+    this.aplicarFiltros();
+  }
+
+  revisarCriticos(): void {
+    this.mostrarPanelFiltros = true;
+    if (!this.estadosStockSeleccionados.includes('bajo')) {
+      this.estadosStockSeleccionados.push('bajo');
+    }
+    if (!this.estadosStockSeleccionados.includes('agotado')) {
+      this.estadosStockSeleccionados.push('agotado');
+    }
+    this.aplicarFiltros();
+  }
+
+  get totalFiltrosActivos(): number {
+    return this.categoriasSeleccionadas.length + this.estadosStockSeleccionados.length;
   }
 
   private aplicarFiltros(): void {
@@ -85,11 +123,20 @@ export class Productos implements OnInit {
         (p.descripcion || '').toLowerCase().includes(term) ||
         (p.categoriaNombre || '').toLowerCase().includes(term);
 
-      const coincideCategoria = this.categoriaFiltro === 'todas' ||
-        p.categoriaId === this.categoriaFiltro;
+      const coincideCategoria = this.categoriasSeleccionadas.length === 0 ||
+        (p.categoriaId != null && this.categoriasSeleccionadas.includes(p.categoriaId));
 
-      return coincideTexto && coincideCategoria;
+      const coincideStock = this.estadosStockSeleccionados.length === 0 ||
+        this.estadosStockSeleccionados.includes(this.getEstadoStock(p));
+
+      return coincideTexto && coincideCategoria && coincideStock;
     });
+  }
+
+  private getEstadoStock(p: Producto): EstadoStock {
+    if (p.stock === 0) return 'agotado';
+    if (p.stock <= p.stockMinimo) return 'bajo';
+    return 'normal';
   }
 
   abrirNuevo(): void {
