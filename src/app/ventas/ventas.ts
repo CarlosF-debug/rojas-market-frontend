@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { ProductoService, Producto } from '../services/producto';
+import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
 
 // ===================== TYPES =====================
@@ -26,6 +27,7 @@ export class Ventas implements OnInit {
 
   constructor(
     private productoService: ProductoService,
+    private categoriaService: CategoriaService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
     public router: Router
@@ -41,6 +43,7 @@ export class Ventas implements OnInit {
     this.nombre = this.auth.getNombre() || '';
     this.rol = this.auth.getRol() || '';
     this.cargarProductos();
+    this.cargarCategorias();
   }
 
   cerrarSesion(): void {
@@ -68,6 +71,24 @@ export class Ventas implements OnInit {
     });
   }
 
+  // ===================== CATEGORÍAS =====================
+
+  categorias: Categoria[] = [];
+  categoriaSeleccionada = 0; // 0 = "Todas las categorías"
+
+  cargarCategorias(): void {
+    this.categoriaService.obtenerTodas().subscribe({
+      next: (data) => {
+        this.categorias = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onCategoriaChange(): void {
+    this.currentPage = 1;
+  }
+
   // Helper para mostrar foto del producto si tu backend la envía (campo opcional,
   // aún no existe en tu interfaz Producto). Si no hay imagen, se muestra un ícono genérico.
   getImagen(p: Producto): string | undefined {
@@ -79,9 +100,11 @@ export class Ventas implements OnInit {
   searchTerm = '';
 
   get filteredProducts(): Producto[] {
-    return this.productos.filter((p) =>
-      (p.nombre || '').toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    return this.productos.filter((p) => {
+      const coincideTexto = (p.nombre || '').toLowerCase().includes(this.searchTerm.toLowerCase());
+      const coincideCategoria = this.categoriaSeleccionada === 0 || p.categoriaId === this.categoriaSeleccionada;
+      return coincideTexto && coincideCategoria;
+    });
   }
 
   get paginatedProducts(): Producto[] {
