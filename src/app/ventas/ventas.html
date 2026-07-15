@@ -111,12 +111,13 @@
               </svg>
             </span>
           </div>
-          <select class="category-select">
-            <option>Todas las categorías</option>
-            <option>Bebidas</option>
-            <option>Snacks</option>
-            <option>Abarrotes</option>
-            <option>Limpieza</option>
+          <select
+            class="category-select"
+            [(ngModel)]="categoriaSeleccionada"
+            (ngModelChange)="onCategoriaChange()"
+          >
+            <option [ngValue]="0">Todas las categorías</option>
+            <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
           </select>
         </div>
 
