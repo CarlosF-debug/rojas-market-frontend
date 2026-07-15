@@ -3,7 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ReporteIaService, AlertaInventario, ResumenReporteIA, NivelRiesgo } from '../services/reporte-ia';
+import { AsistenteIaService } from '../services/asistente-ia';
 import { AuthService } from '../services/auth';
+
+type PestanaReportes = 'resumen' | 'asistente';
+
+interface MensajeChat {
+  rol: 'usuario' | 'asistente';
+  texto: string;
+}
 
 @Component({
   selector: 'app-reportes-ia',
@@ -18,6 +26,8 @@ export class ReportesIa implements OnInit {
   rol = '';
   busqueda = '';
 
+  pestanaActiva: PestanaReportes = 'resumen';
+
   resumen: ResumenReporteIA = {
     productosStockBajo: 0,
     productosAgotados: 0,
@@ -29,8 +39,16 @@ export class ReportesIa implements OnInit {
   alertas: AlertaInventario[] = [];
   cargando = true;
 
+  // Chat del asistente
+  mensajes: MensajeChat[] = [
+    { rol: 'asistente', texto: '¡Hola! Soy el asistente de Rojas Market. Pregúntame sobre stock bajo, alertas, productos más vendidos o pedidos pendientes.' }
+  ];
+  mensajeActual = '';
+  enviandoMensaje = false;
+
   constructor(
     private reporteService: ReporteIaService,
+    private asistenteService: AsistenteIaService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
     public router: Router
@@ -40,6 +58,10 @@ export class ReportesIa implements OnInit {
     this.nombre = this.auth.getNombre() || '';
     this.rol = this.auth.getRol() || '';
     this.actualizarDatos();
+  }
+
+  cambiarPestana(p: PestanaReportes): void {
+    this.pestanaActiva = p;
   }
 
   actualizarDatos(): void {
@@ -77,6 +99,28 @@ export class ReportesIa implements OnInit {
         window.URL.revokeObjectURL(url);
       },
       error: () => alert('No se pudo generar el informe. Intenta nuevamente.')
+    });
+  }
+
+  enviarMensaje(): void {
+    const texto = this.mensajeActual.trim();
+    if (!texto || this.enviandoMensaje) return;
+
+    this.mensajes.push({ rol: 'usuario', texto });
+    this.mensajeActual = '';
+    this.enviandoMensaje = true;
+
+    this.asistenteService.enviarMensaje(texto).subscribe({
+      next: (res) => {
+        this.mensajes.push({ rol: 'asistente', texto: res.respuesta });
+        this.enviandoMensaje = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.mensajes.push({ rol: 'asistente', texto: 'Ocurrió un error al consultar el asistente. Intenta nuevamente.' });
+        this.enviandoMensaje = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 

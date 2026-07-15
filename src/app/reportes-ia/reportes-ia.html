@@ -1,5 +1,6 @@
 <div class="layout">
 
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">🛒</div>
@@ -44,6 +45,12 @@
       </a>
     </nav>
     <div class="sidebar-footer">
+      <a routerLink="/ajustes" routerLinkActive="activo" class="menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Ajustes
+      </a>
       <a (click)="cerrarSesion()" class="menu-item cerrar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -54,8 +61,10 @@
     </div>
   </aside>
 
+  <!-- Contenido -->
   <main class="contenido">
 
+    <!-- Topbar -->
     <div class="topbar">
       <div class="busqueda">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
@@ -64,12 +73,6 @@
         <input type="text" placeholder="Buscar productos, proveedores, pedidos..." [(ngModel)]="busqueda" />
       </div>
       <div class="topbar-acciones">
-        <button class="btn-notif">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-        </button>
         <div class="usuario-topbar">
           <div class="usuario-avatar">{{ nombre.charAt(0) }}</div>
           <div>
@@ -80,6 +83,7 @@
       </div>
     </div>
 
+    <!-- Encabezado -->
     <div class="encabezado">
       <div class="encabezado-titulo">
         <span class="icono-titulo">🤖</span>
@@ -88,86 +92,137 @@
           <p>Análisis inteligente de inventario y predicción de demanda.</p>
         </div>
       </div>
-      <div class="filtro-fechas">
+      <div class="filtro-fechas" *ngIf="pestanaActiva === 'resumen'">
         <button class="btn-descargar" (click)="descargarInforme()">⬇ Descargar Informe Excel</button>
         <button class="btn-actualizar" (click)="actualizarDatos()">⟳ Actualizar datos</button>
       </div>
     </div>
 
-    <div class="tarjetas">
-      <div class="tarjeta">
-        <div class="tarjeta-icono">⚠️</div>
-        <div>
-          <div class="tarjeta-label">Productos con stock bajo</div>
-          <div class="tarjeta-valor">{{ resumen.productosStockBajo }}</div>
-          <div class="tarjeta-sub">Requieren atención</div>
-        </div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-icono rojo">✕</div>
-        <div>
-          <div class="tarjeta-label">Productos agotados</div>
-          <div class="tarjeta-valor">{{ resumen.productosAgotados }}</div>
-          <div class="tarjeta-sub">Sin disponibilidad</div>
-        </div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-icono azul">📈</div>
-        <div>
-          <div class="tarjeta-label">Predicción de quiebre esta semana</div>
-          <div class="tarjeta-valor">{{ resumen.prediccionQuiebreSemana }}</div>
-          <div class="tarjeta-sub">Según IA</div>
-        </div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-icono verde">📦</div>
-        <div>
-          <div class="tarjeta-label">Proveedor con más pedidos</div>
-          <div class="tarjeta-valor tarjeta-valor-texto">{{ resumen.proveedorTop || '—' }}</div>
-          <div class="tarjeta-sub">{{ resumen.pedidosProveedorTop }} pedidos este mes</div>
-        </div>
-      </div>
+    <!-- Pestañas -->
+    <div class="tabs-reportes">
+      <button class="tab-reporte" [class.activo]="pestanaActiva === 'resumen'" (click)="cambiarPestana('resumen')">
+        📊 Resumen
+      </button>
+      <button class="tab-reporte" [class.activo]="pestanaActiva === 'asistente'" (click)="cambiarPestana('asistente')">
+        🤖 Asistente IA
+      </button>
     </div>
 
-    <div class="tabla-container">
-      <div class="tabla-header">
-        <h2>Alertas de Inventario (IA) <span class="badge-total">{{ alertas.length }} Total</span></h2>
+    <!-- Panel: Resumen -->
+    <ng-container *ngIf="pestanaActiva === 'resumen'">
+
+      <!-- Tarjetas KPI -->
+      <div class="tarjetas">
+        <div class="tarjeta">
+          <div class="tarjeta-icono">⚠️</div>
+          <div>
+            <div class="tarjeta-label">Productos con stock bajo</div>
+            <div class="tarjeta-valor">{{ resumen.productosStockBajo }}</div>
+            <div class="tarjeta-sub">Requieren atención</div>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="tarjeta-icono rojo">✕</div>
+          <div>
+            <div class="tarjeta-label">Productos agotados</div>
+            <div class="tarjeta-valor">{{ resumen.productosAgotados }}</div>
+            <div class="tarjeta-sub">Sin disponibilidad</div>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="tarjeta-icono azul">📈</div>
+          <div>
+            <div class="tarjeta-label">Predicción de quiebre esta semana</div>
+            <div class="tarjeta-valor">{{ resumen.prediccionQuiebreSemana }}</div>
+            <div class="tarjeta-sub">Según IA</div>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="tarjeta-icono verde">📦</div>
+          <div>
+            <div class="tarjeta-label">Proveedor con más pedidos</div>
+            <div class="tarjeta-valor tarjeta-valor-texto">{{ resumen.proveedorTop || '—' }}</div>
+            <div class="tarjeta-sub">{{ resumen.pedidosProveedorTop }} pedidos este mes</div>
+          </div>
+        </div>
       </div>
 
-      <div class="cargando" *ngIf="cargando"><p>Analizando inventario...</p></div>
+      <!-- Alertas de inventario -->
+      <div class="tabla-container">
+        <div class="tabla-header">
+          <h2>Alertas de Inventario (IA) <span class="badge-total">{{ alertas.length }} Total</span></h2>
+        </div>
 
-      <table *ngIf="!cargando">
-        <thead>
-          <tr>
-            <th>PRODUCTO</th>
-            <th>STOCK ACTUAL</th>
-            <th>STOCK MÍNIMO</th>
-            <th>PREDICCIÓN IA</th>
-            <th>ESTADO</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let a of alertas">
-            <td>
-              <div class="producto-celda">
-                <div class="producto-icono">📦</div>
-                <div class="producto-nombre">{{ a.productoNombre }}</div>
-              </div>
-            </td>
-            <td [class]="'stock-actual ' + getEstadoClass(a.nivelRiesgo)">{{ a.stockActual }}</td>
-            <td>{{ a.stockMinimo }}</td>
-            <td [class]="'prediccion ' + getEstadoClass(a.nivelRiesgo)">{{ a.mensaje }}</td>
-            <td><span [class]="'badge-estado ' + getEstadoClass(a.nivelRiesgo)">{{ getNivelLabel(a.nivelRiesgo) }}</span></td>
-          </tr>
-          <tr *ngIf="alertas.length === 0">
-            <td colspan="5" class="sin-datos">No hay alertas de inventario por ahora.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <div class="cargando" *ngIf="cargando"><p>Analizando inventario...</p></div>
+
+        <table *ngIf="!cargando">
+          <thead>
+            <tr>
+              <th>PRODUCTO</th>
+              <th>STOCK ACTUAL</th>
+              <th>STOCK MÍNIMO</th>
+              <th>PREDICCIÓN IA</th>
+              <th>ESTADO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of alertas">
+              <td>
+                <div class="producto-celda">
+                  <div class="producto-icono">📦</div>
+                  <div class="producto-nombre">{{ a.productoNombre }}</div>
+                </div>
+              </td>
+              <td [class]="'stock-actual ' + getEstadoClass(a.nivelRiesgo)">{{ a.stockActual }}</td>
+              <td>{{ a.stockMinimo }}</td>
+              <td [class]="'prediccion ' + getEstadoClass(a.nivelRiesgo)">{{ a.mensaje }}</td>
+              <td><span [class]="'badge-estado ' + getEstadoClass(a.nivelRiesgo)">{{ getNivelLabel(a.nivelRiesgo) }}</span></td>
+            </tr>
+            <tr *ngIf="alertas.length === 0">
+              <td colspan="5" class="sin-datos">No hay alertas de inventario por ahora.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </ng-container>
+
+    <!-- Panel: Asistente IA -->
+    <ng-container *ngIf="pestanaActiva === 'asistente'">
+      <div class="chat-container">
+
+        <div class="chat-mensajes">
+          <div *ngFor="let m of mensajes" class="chat-fila" [class.usuario]="m.rol === 'usuario'">
+            <div class="chat-avatar" [class.avatar-asistente]="m.rol === 'asistente'">
+              {{ m.rol === 'asistente' ? '🤖' : nombre.charAt(0) }}
+            </div>
+            <div class="chat-burbuja" [class.burbuja-usuario]="m.rol === 'usuario'">
+              {{ m.texto }}
+            </div>
+          </div>
+
+          <div class="chat-fila" *ngIf="enviandoMensaje">
+            <div class="chat-avatar avatar-asistente">🤖</div>
+            <div class="chat-burbuja chat-escribiendo">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-wrapper">
+          <input type="text" placeholder="Pregúntale algo al asistente… (ej: ¿qué productos están por agotarse?)"
+            [(ngModel)]="mensajeActual"
+            (keyup.enter)="enviarMensaje()"
+            [disabled]="enviandoMensaje" />
+          <button class="btn-enviar-chat" (click)="enviarMensaje()" [disabled]="enviandoMensaje || !mensajeActual.trim()">
+            Enviar ➤
+          </button>
+        </div>
+      </div>
+    </ng-container>
 
   </main>
 </div>
