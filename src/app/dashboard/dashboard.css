@@ -125,6 +125,7 @@
   cursor: pointer;
   padding: 6px;
   border-radius: 8px;
+  position: relative; /* Ajustado desde tus nuevas clases */
 }
 
 .btn-notif:hover { background: #f5f6fa; }
@@ -275,4 +276,156 @@
   text-align: center;
   color: #888;
   padding: 40px;
+}
+
+/* ========================================================================= */
+/* NUEVAS CLASES AÑADIDAS (KPIs reales, Alertas Recientes y Stock Bajo)      */
+/* ========================================================================= */
+
+.tarjeta-sub {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+.tarjeta.verde-borde {
+  border-top-color: #27ae60;
+}
+
+.tag.morado {
+  color: #8e44ad;
+}
+
+.badge-notif {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #c0392b;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Grid de Alertas + Stock bajo */
+.grid-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 0 28px 24px;
+}
+
+.panel-dashboard {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  padding: 20px;
+}
+
+.panel-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.panel-dashboard-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.ver-todo {
+  font-size: 12px;
+  color: #c0392b;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ver-todo:hover {
+  text-decoration: underline;
+}
+
+.lista-alertas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.fila-alerta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.fila-alerta:last-child {
+  border-bottom: none;
+}
+
+.alerta-icono-mini {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.alerta-texto-mini {
+  flex: 1;
+  min-width: 0;
+}
+
+.alerta-producto {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.alerta-mensaje {
+  font-size: 11.5px;
+  color: #888;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge-nivel {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 10px;
+  border: 1px solid currentColor;
+  flex-shrink: 0;
+}
+
+.estado-critico, .estado-urgente {
+  color: #c0392b;
+}
+
+.estado-bajo {
+  color: #d4970a;
+}
+
+.estado-normal {
+  color: #27ae60;
+}
+
+.sin-datos-mini {
+  text-align: center;
+  color: #aaa;
+  font-size: 12.5px;
+  padding: 30px 0;
+}
+
+.boton-icono {
+  font-size: 15px;
+  margin-right: 4px;
 }

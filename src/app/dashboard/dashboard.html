@@ -77,6 +77,7 @@
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
           </svg>
+          <span class="badge-notif" *ngIf="resumen.alertasNoLeidas > 0">{{ resumen.alertasNoLeidas }}</span>
         </button>
         <div class="usuario-topbar">
           <div class="usuario-avatar">{{ nombre.charAt(0) }}</div>
@@ -93,68 +94,130 @@
         <h1>Panel de Control</h1>
         <p>Bienvenido de nuevo. Aquí tienes un resumen del estado actual de Rojas Market.</p>
       </div>
-      <button class="btn-nuevo" (click)="router.navigate(['/ventas'])">+ Nuevo Pedido</button>
-    </div>
-
-    <div class="tarjetas" *ngIf="!cargando">
-      <div class="tarjeta">
-        <div class="tarjeta-top">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-          </svg>
-          <span class="tag">TOTAL</span>
-        </div>
-        <div class="tarjeta-label">TOTAL DE PRODUCTOS</div>
-        <div class="tarjeta-valor">{{ totalProductos }}</div>
-      </div>
-
-      <div class="tarjeta critico">
-        <div class="tarjeta-top">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          <span class="tag rojo">CRÍTICO</span>
-        </div>
-        <div class="tarjeta-label">STOCK BAJO</div>
-        <div class="tarjeta-valor rojo">{{ productosBajoStock }}</div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-top">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span class="tag verde">IA PREDICTIVA</span>
-        </div>
-        <div class="tarjeta-label">STOCK NORMAL</div>
-        <div class="tarjeta-valor">{{ totalProductos - productosBajoStock }}</div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-top">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-          <span class="tag">PENDIENTE</span>
-        </div>
-        <div class="tarjeta-label">PEDIDOS PENDIENTES</div>
-        <div class="tarjeta-valor">0</div>
-      </div>
+      <button class="btn-nuevo" (click)="router.navigate(['/ventas'])">+ Nueva Venta</button>
     </div>
 
     <div class="cargando" *ngIf="cargando"><p>Cargando datos...</p></div>
 
-    <div class="accesos-rapidos">
-      <h2>Accesos rápidos</h2>
-      <div class="botones">
-        <button (click)="router.navigate(['/productos'])">+ Nuevo Producto</button>
-        <button (click)="router.navigate(['/ventas'])">+ Nueva Venta</button>
-        <button (click)="router.navigate(['/proveedores'])">+ Nuevo Proveedor</button>
+    <ng-container *ngIf="!cargando">
+
+      <!-- Tarjetas KPI -->
+      <div class="tarjetas">
+        <div class="tarjeta">
+          <div class="tarjeta-top">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+            <span class="tag">TOTAL</span>
+          </div>
+          <div class="tarjeta-label">TOTAL DE PRODUCTOS</div>
+          <div class="tarjeta-valor">{{ resumen.totalProductos }}</div>
+        </div>
+
+        <div class="tarjeta critico">
+          <div class="tarjeta-top">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span class="tag rojo">CRÍTICO</span>
+          </div>
+          <div class="tarjeta-label">STOCK BAJO</div>
+          <div class="tarjeta-valor rojo">{{ resumen.productosBajoStock }}</div>
+        </div>
+
+        <div class="tarjeta verde-borde">
+          <div class="tarjeta-top">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <span class="tag verde">HOY</span>
+          </div>
+          <div class="tarjeta-label">VENTAS DE HOY</div>
+          <div class="tarjeta-valor">S/ {{ resumen.ventasHoy | number:'1.2-2' }}</div>
+          <div class="tarjeta-sub">{{ resumen.cantidadVentasHoy }} transacciones</div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="tarjeta-top">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8e44ad" stroke-width="2">
+              <path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-2.5-2.5-4.1 4.1"/>
+            </svg>
+            <span class="tag morado">MES</span>
+          </div>
+          <div class="tarjeta-label">VENTAS DEL MES</div>
+          <div class="tarjeta-valor">S/ {{ resumen.ventasMes | number:'1.2-2' }}</div>
+        </div>
       </div>
-    </div>
+
+      <!-- Alertas + Stock bajo -->
+      <div class="grid-dashboard">
+
+        <div class="panel-dashboard">
+          <div class="panel-dashboard-header">
+            <h2>Alertas Recientes</h2>
+            <a routerLink="/reportes-ia" class="ver-todo">Ver todas →</a>
+          </div>
+
+          <div class="lista-alertas" *ngIf="resumen.ultimasAlertas.length > 0; else sinAlertas">
+            <div class="fila-alerta" *ngFor="let a of resumen.ultimasAlertas">
+              <div class="alerta-icono-mini">⚠️</div>
+              <div class="alerta-texto-mini">
+                <div class="alerta-producto">{{ a.productoNombre }}</div>
+                <div class="alerta-mensaje">{{ a.mensaje }}</div>
+              </div>
+              <span [class]="'badge-nivel ' + getEstadoClass(a.nivelRiesgo)">{{ getNivelLabel(a.nivelRiesgo) }}</span>
+            </div>
+          </div>
+          <ng-template #sinAlertas>
+            <p class="sin-datos-mini">No hay alertas pendientes. Todo en orden 🎉</p>
+          </ng-template>
+        </div>
+
+        <div class="panel-dashboard">
+          <div class="panel-dashboard-header">
+            <h2>Productos con Stock Bajo</h2>
+            <a routerLink="/productos" class="ver-todo">Ver inventario →</a>
+          </div>
+
+          <div class="lista-alertas" *ngIf="resumen.productosBajoStockLista.length > 0; else sinStockBajo">
+            <div class="fila-alerta" *ngFor="let p of resumen.productosBajoStockLista">
+              <div class="alerta-icono-mini">📦</div>
+              <div class="alerta-texto-mini">
+                <div class="alerta-producto">{{ p.nombre }}</div>
+                <div class="alerta-mensaje">Stock: {{ p.stock }} / mínimo: {{ p.stockMinimo }}</div>
+              </div>
+              <span class="badge-nivel estado-bajo">Bajo</span>
+            </div>
+          </div>
+          <ng-template #sinStockBajo>
+            <p class="sin-datos-mini">Todos los productos tienen stock suficiente 👍</p>
+          </ng-template>
+        </div>
+
+      </div>
+
+      <!-- Accesos rápidos -->
+      <div class="accesos-rapidos">
+        <h2>Accesos rápidos</h2>
+        <div class="botones">
+          <button (click)="router.navigate(['/productos'])">
+            <span class="boton-icono">📦</span> Nuevo Producto
+          </button>
+          <button (click)="router.navigate(['/ventas'])">
+            <span class="boton-icono">💵</span> Nueva Venta
+          </button>
+          <button (click)="router.navigate(['/proveedores'])">
+            <span class="boton-icono">🚚</span> Nuevo Proveedor
+          </button>
+          <button (click)="router.navigate(['/reportes-ia'])">
+            <span class="boton-icono">🤖</span> Asistente IA
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
 
   </main>
 </div>
