@@ -2,11 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { forkJoin } from 'rxjs';
 import * as QRCode from 'qrcode';
 import { ProductoService, Producto } from '../services/producto';
 import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
+import { VentaService, Venta } from '../services/venta';
 
 // ===================== TYPES =====================
 
@@ -26,9 +26,10 @@ type PaymentMethod = 'efectivo' | 'yape';
 })
 export class Ventas implements OnInit {
 
-  constructor(
+ constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaService,
+    private ventaService: VentaService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
     public router: Router
@@ -294,17 +295,18 @@ export class Ventas implements OnInit {
 
     this.procesando = true;
 
-    // Por cada producto en el carrito, resta la cantidad vendida de su stock actual
-    // y envía la actualización a la base de datos.
-    const actualizaciones = this.cart.map((item) => {
-      const productoActualizado: Producto = {
-        ...item.product,
-        stock: item.product.stock - item.qty,
-      };
-      return this.productoService.actualizar(item.product.id!, productoActualizado);
-    });
+    // Arma la venta con sus detalles. El backend se encarga de descontar
+    // el stock de cada producto y de dejar el registro guardado para
+    // los reportes y el asistente de IA.
+    const nuevaVenta: Venta = {
+      detalles: this.cart.map((item) => ({
+        productoId: item.product.id!,
+        cantidad: item.qty,
+        precioUnitario: item.product.precio
+      }))
+    };
 
-    forkJoin(actualizaciones).subscribe({
+    this.ventaService.crear(nuevaVenta).subscribe({
       next: () => {
         alert(`Venta procesada por ${this.formatCurrency(this.total)}. ¡Gracias!`);
         this.clearCart();
@@ -315,8 +317,9 @@ export class Ventas implements OnInit {
         this.procesando = false;
         this.cargarProductos(); // refresca el stock real desde el backend
       },
-      error: () => {
-        alert('Ocurrió un error al descontar el stock. Verifica tu conexión con el servidor e inténtalo de nuevo.');
+      error: (err) => {
+        const mensaje = err?.error?.message || 'Ocurrió un error al procesar la venta. Verifica el stock disponible e inténtalo de nuevo.';
+        alert(mensaje);
         this.procesando = false;
       },
     });
