@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import * as QRCode from 'qrcode';
 import { ProductoService, Producto } from '../services/producto';
 import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
@@ -142,6 +143,7 @@ export class Ventas implements OnInit {
   paidAmount = '0.00';
   activePaymentMethod: PaymentMethod = 'efectivo';
   procesando = false;
+  qrDataUrl: string | null = null;
 
   // ===================== COMPUTED (getters) =====================
 
@@ -190,11 +192,13 @@ export class Ventas implements OnInit {
     } else {
       this.cart.push({ product: producto, qty: 1 });
     }
+    this.actualizarQRSiCorresponde();
   }
 
   increaseQty(id: number | undefined): void {
     const item = this.cart.find((i) => i.product.id === id);
     if (item && item.qty < item.product.stock) item.qty += 1;
+    this.actualizarQRSiCorresponde();
   }
 
   decreaseQty(id: number | undefined): void {
@@ -204,14 +208,17 @@ export class Ventas implements OnInit {
     if (item.qty <= 0) {
       this.removeFromCart(id);
     }
+    this.actualizarQRSiCorresponde();
   }
 
   removeFromCart(id: number | undefined): void {
     this.cart = this.cart.filter((i) => i.product.id !== id);
+    this.actualizarQRSiCorresponde();
   }
 
   clearCart(): void {
     this.cart = [];
+    this.actualizarQRSiCorresponde();
   }
 
   lineSubtotal(item: CartItem): number {
@@ -222,10 +229,39 @@ export class Ventas implements OnInit {
 
   setPaymentMethod(method: PaymentMethod): void {
     this.activePaymentMethod = method;
+    if (method === 'yape') {
+      this.generarQR();
+    }
+  }
+
+  async generarQR(): Promise<void> {
+    const contenido =
+      `ROJAS MARKET\n` +
+      `Monto a pagar: ${this.formatCurrency(this.total)}\n` +
+      `Caja: CAJA-01\n` +
+      `Fecha: ${this.currentDateTime}`;
+
+    try {
+      this.qrDataUrl = await QRCode.toDataURL(contenido, {
+        width: 220,
+        margin: 1,
+        color: { dark: '#1f2430', light: '#ffffff' },
+      });
+    } catch {
+      this.qrDataUrl = null;
+    }
+    this.cdr.detectChanges();
+  }
+
+  private actualizarQRSiCorresponde(): void {
+    if (this.activePaymentMethod === 'yape') {
+      this.generarQR();
+    }
   }
 
   onDiscountChange(value: string): void {
     this.discount = this.parseAmount(value);
+    this.actualizarQRSiCorresponde();
   }
 
   pressKey(key: string): void {
@@ -274,6 +310,8 @@ export class Ventas implements OnInit {
         this.clearCart();
         this.paidAmount = '0.00';
         this.discount = 0;
+        this.activePaymentMethod = 'efectivo';
+        this.qrDataUrl = null;
         this.procesando = false;
         this.cargarProductos(); // refresca el stock real desde el backend
       },

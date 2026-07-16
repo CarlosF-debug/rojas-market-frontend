@@ -281,7 +281,7 @@
             </button>
           </div>
 
-          <div class="pay-body">
+          <div class="pay-body" *ngIf="activePaymentMethod === 'efectivo'">
             <div class="pay-inputs">
               <label>Pagado con:</label>
               <input type="text" [ngModel]="paidAmount" (ngModelChange)="paidAmount = $event" />
@@ -305,6 +305,12 @@
               <button (click)="pressKey('00')">00</button>
               <button (click)="pressKey('.')">.</button>
             </div>
+          </div>
+
+          <div class="qr-pago" *ngIf="activePaymentMethod === 'yape'">
+            <p class="qr-monto">Monto a cobrar: <strong>{{ formatCurrency(total) }}</strong></p>
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Código QR de pago" class="qr-imagen" />
+            <p class="qr-ayuda">Pide al cliente escanear este código con su app Yape o Plin.</p>
           </div>
 
           <button class="process-btn" [disabled]="isCartEmpty || procesando" (click)="processSale()">
