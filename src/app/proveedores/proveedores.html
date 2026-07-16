@@ -80,10 +80,21 @@
         <h1>Proveedores</h1>
         <p>Gestiona la información de tus proveedores y su historial de compras.</p>
       </div>
-      <button class="btn-nuevo" (click)="abrirNuevo()">+ Nuevo Proveedor</button>
+      <button class="btn-nuevo" *ngIf="pestanaActiva === 'directorio'" (click)="abrirNuevo()">+ Nuevo Proveedor</button>
     </div>
 
-    <div class="grid-superior">
+    <!-- Pestañas -->
+    <div class="tabs-proveedores">
+      <button class="tab-proveedor" [class.activo]="pestanaActiva === 'directorio'" (click)="cambiarPestana('directorio')">
+        🏢 Directorio de Proveedores
+      </button>
+      <button class="tab-proveedor" [class.activo]="pestanaActiva === 'pedidos'" (click)="cambiarPestana('pedidos')">
+        📦 Pedidos y Solicitudes
+      </button>
+    </div>
+
+    <!-- Panel: Directorio de Proveedores -->
+    <div class="grid-superior" *ngIf="pestanaActiva === 'directorio'">
 
       <div class="tabla-container">
         <div class="tabla-header">
@@ -170,7 +181,8 @@
 
     </div>
 
-    <div class="grid-inferior">
+    <!-- Panel: Pedidos y Solicitudes -->
+    <div class="grid-inferior" *ngIf="pestanaActiva === 'pedidos'">
 
       <div class="panel-solicitud" *ngIf="mostrarSolicitud">
         <div class="panel-solicitud-header">
@@ -264,7 +276,7 @@
             <tr *ngFor="let ped of pedidosPagina">
               <td class="celda-codigo">{{ ped.numero || ('PED-' + ped.id) }}</td>
               <td>{{ ped.proveedorNombre }}</td>
-              <td>{{ ped.fecha }}</td>
+              <td>{{ ped.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
               <td class="precio">S/ {{ ped.total | number:'1.2-2' }}</td>
               <td>
                 <select [value]="ped.estado" (change)="cambiarEstadoPedido(ped, $any($event.target).value)" [class]="'badge-estado-pedido ' + getEstadoClass(ped.estado)">
@@ -371,7 +383,7 @@
       <ng-container *ngIf="!cargandoDetalle && detallePedido">
         <div class="info-detalles-solicitud">
           <p><strong>Proveedor:</strong> {{ detallePedido.proveedorNombre }}</p>
-          <p><strong>Fecha de Solicitud:</strong> {{ detallePedido.fechaSolicitud }}</p>
+          <p><strong>Fecha de Solicitud:</strong> {{ detallePedido.fechaSolicitud | date:'dd/MM/yyyy HH:mm' }}</p>
           <p *ngIf="detallePedido.observaciones"><strong>Observaciones:</strong> {{ detallePedido.observaciones }}</p>
         </div>
 

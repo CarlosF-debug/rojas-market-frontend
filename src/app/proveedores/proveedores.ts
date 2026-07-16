@@ -20,6 +20,7 @@ export class Proveedores implements OnInit {
   nombre = '';
   rol = '';
   busqueda = '';
+  pestanaActiva: 'directorio' | 'pedidos' = 'directorio';
 
   proveedores: Proveedor[] = [];
   proveedoresFiltrados: Proveedor[] = [];
@@ -125,9 +126,14 @@ export class Proveedores implements OnInit {
     return { nombre: '', contacto: '', telefono: '', correo: '', estado: 'ACTIVO' };
   }
 
+  cambiarPestana(p: 'directorio' | 'pedidos'): void {
+    this.pestanaActiva = p;
+  }
+
   abrirSolicitud(): void {
     this.nuevaSolicitud = this.solicitudVacia();
     this.mostrarSolicitud = true;
+    this.pestanaActiva = 'pedidos';
   }
 
   cerrarSolicitud(): void {
