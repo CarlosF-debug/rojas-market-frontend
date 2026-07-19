@@ -1,8 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import * as QRCode from 'qrcode';
+import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { ProductoService, Producto } from '../services/producto';
 import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
@@ -15,7 +17,8 @@ interface CartItem {
   qty: number;
 }
 
-type PaymentMethod = 'efectivo' | 'yape';
+// Solo 3 métodos: Efectivo (con boleta), Yape/Plin (QR simulado con Stripe), Tarjeta (Stripe)
+type PaymentMethod = 'efectivo' | 'yape' | 'tarjeta';
 
 @Component({
   selector: 'app-ventas',
@@ -24,14 +27,15 @@ type PaymentMethod = 'efectivo' | 'yape';
   templateUrl: './ventas.html',
   styleUrl: './ventas.css',
 })
-export class Ventas implements OnInit {
+export class Ventas implements OnInit, AfterViewInit, OnDestroy {
 
- constructor(
+  constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaService,
     private ventaService: VentaService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
+    private http: HttpClient,
     public router: Router
   ) {}
 
@@ -46,6 +50,14 @@ export class Ventas implements OnInit {
     this.rol = this.auth.getRol() || '';
     this.cargarProductos();
     this.cargarCategorias();
+  }
+
+  ngAfterViewInit(): void {
+    this.initStripe();
+  }
+
+  ngOnDestroy(): void {
+    this.detenerPollingQR();
   }
 
   cerrarSesion(): void {
@@ -92,7 +104,7 @@ export class Ventas implements OnInit {
   }
 
   // Helper para mostrar foto del producto si tu backend la envía (campo opcional,
-  // aún no existe en tu interfaz Producto). Si no hay imagen, se muestra un ícono genérico.
+  // aún no existe en tu interfaz Producto). Si no hay imagen, no se muestra nada.
   getImagen(p: Producto): string | undefined {
     return (p as any).imagenUrl;
   }
@@ -144,7 +156,6 @@ export class Ventas implements OnInit {
   paidAmount = '0.00';
   activePaymentMethod: PaymentMethod = 'efectivo';
   procesando = false;
-  qrDataUrl: string | null = null;
 
   // ===================== COMPUTED (getters) =====================
 
@@ -226,39 +237,194 @@ export class Ventas implements OnInit {
     return item.product.precio * item.qty;
   }
 
-  // ===================== PAYMENT =====================
+  // ===================== PAYMENT METHOD SWITCH =====================
 
   setPaymentMethod(method: PaymentMethod): void {
+    if (method === 'yape' && this.isCartEmpty) {
+      alert('Agrega productos al carrito antes de elegir este método de pago.');
+      return;
+    }
+
+    // Si estábamos esperando un pago QR y el cajero cambia de método, cancelamos el sondeo
+    if (this.activePaymentMethod === 'yape' && method !== 'yape') {
+      this.detenerPollingQR();
+      this.qrStripeDataUrl = null;
+    }
+
     this.activePaymentMethod = method;
+
     if (method === 'yape') {
-      this.generarQR();
+      this.generarQRStripe();
     }
-  }
-
-  async generarQR(): Promise<void> {
-    const contenido =
-      `ROJAS MARKET\n` +
-      `Monto a pagar: ${this.formatCurrency(this.total)}\n` +
-      `Caja: CAJA-01\n` +
-      `Fecha: ${this.currentDateTime}`;
-
-    try {
-      this.qrDataUrl = await QRCode.toDataURL(contenido, {
-        width: 220,
-        margin: 1,
-        color: { dark: '#1f2430', light: '#ffffff' },
-      });
-    } catch {
-      this.qrDataUrl = null;
-    }
-    this.cdr.detectChanges();
   }
 
   private actualizarQRSiCorresponde(): void {
     if (this.activePaymentMethod === 'yape') {
-      this.generarQR();
+      this.generarQRStripe();
     }
   }
+
+  // ===================== STRIPE: TARJETA (formulario escrito) =====================
+
+  private stripe: Stripe | null = null;
+  private elements: StripeElements | null = null;
+  private cardElement: StripeCardElement | null = null;
+  stripeError: string | null = null;
+  stripeListo = false;
+
+  // 🔑 Llave PÚBLICA de Stripe (segura de exponer en el frontend).
+  // IMPORTANTE: debe venir de la MISMA cuenta/página que tu llave secreta en el backend.
+  private readonly stripePublicKey = 'pk_test_51Tuaru2Zd3epulFwmqqtOOPIKuEo3doGIfULxARWQDvH8xegUUulB0PPNYEccCi5t0AneSJ3sjN7kuP446jsvk8L00dGfGw7WE';
+
+  private async initStripe(): Promise<void> {
+    this.stripe = await loadStripe(this.stripePublicKey);
+    if (!this.stripe) {
+      this.stripeError = 'No se pudo cargar Stripe. Revisa tu conexión a internet.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.elements = this.stripe.elements();
+    this.cardElement = this.elements.create('card', {
+      style: {
+        base: {
+          fontSize: '14px',
+          color: '#1f2430',
+          '::placeholder': { color: '#7c8394' },
+        },
+        invalid: { color: '#c0242a' },
+      },
+    });
+
+    this.cardElement.mount('#card-element');
+
+    this.cardElement.on('change', (event) => {
+      this.stripeError = event.error ? event.error.message : null;
+      this.cdr.detectChanges();
+    });
+
+    this.stripeListo = true;
+    this.cdr.detectChanges();
+  }
+
+  private async procesarPagoConTarjeta(): Promise<void> {
+    if (!this.stripe || !this.cardElement) {
+      alert('El formulario de tarjeta no cargó correctamente. Recarga la página.');
+      return;
+    }
+
+    this.procesando = true;
+
+    const { paymentMethod, error } = await this.stripe.createPaymentMethod({
+      type: 'card',
+      card: this.cardElement,
+    });
+
+    if (error || !paymentMethod) {
+      this.stripeError = error?.message || 'No se pudo procesar la tarjeta.';
+      this.procesando = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // Le pedimos a nuestro backend que confirme el cobro con Stripe usando la llave secreta.
+    this.http.post<{ exito: boolean; mensaje?: string }>(
+      'http://localhost:8080/api/pagos/stripe',
+      {
+        paymentMethodId: paymentMethod.id,
+        monto: this.total,
+        moneda: 'pen',
+      }
+    ).subscribe({
+      next: (respuesta) => {
+        if (respuesta.exito) {
+          this.confirmarVenta();
+        } else {
+          alert(respuesta.mensaje || 'El pago fue rechazado por el banco.');
+          this.procesando = false;
+        }
+      },
+      error: (err) => {
+        console.error('Error al pagar con tarjeta:', err);
+        alert('No se pudo conectar con el servidor para procesar el pago con tarjeta.');
+        this.procesando = false;
+      },
+    });
+  }
+
+  // ===================== STRIPE: YAPE / PLIN (QR simulado con Stripe Checkout) =====================
+
+  qrStripeDataUrl: string | null = null;
+  verificandoPagoQR = false;
+  private stripeSessionId: string | null = null;
+  private pollingInterval: ReturnType<typeof setInterval> | null = null;
+
+  private generarQRStripe(): void {
+    this.detenerPollingQR();
+    this.qrStripeDataUrl = null;
+    this.stripeError = null;
+
+    this.http.post<{ url: string; sessionId: string }>(
+      'http://localhost:8080/api/pagos/stripe/checkout-session',
+      { monto: this.total, moneda: 'pen' }
+    ).subscribe({
+      next: async (respuesta) => {
+        this.stripeSessionId = respuesta.sessionId;
+        try {
+          this.qrStripeDataUrl = await QRCode.toDataURL(respuesta.url, {
+            width: 220,
+            margin: 1,
+            color: { dark: '#1f2430', light: '#ffffff' },
+          });
+        } catch {
+          this.qrStripeDataUrl = null;
+        }
+        this.cdr.detectChanges();
+        this.iniciarPollingQR();
+      },
+      error: (err) => {
+        console.error('Error al generar el QR de pago:', err);
+        this.stripeError = 'No se pudo generar el QR de pago. Verifica el servidor.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private iniciarPollingQR(): void {
+    this.verificandoPagoQR = true;
+
+    this.pollingInterval = setInterval(() => {
+      if (!this.stripeSessionId) return;
+
+      this.http.get<{ pagado: boolean }>(
+        `http://localhost:8080/api/pagos/stripe/session-status/${this.stripeSessionId}`
+      ).subscribe({
+        next: (res) => {
+          if (res.pagado) {
+            this.detenerPollingQR();
+            this.confirmarVenta();
+          }
+        },
+      });
+    }, 3000);
+  }
+
+  private detenerPollingQR(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+    this.verificandoPagoQR = false;
+  }
+
+  cancelarQRStripe(): void {
+    this.detenerPollingQR();
+    this.qrStripeDataUrl = null;
+    this.stripeSessionId = null;
+    this.setPaymentMethod('efectivo');
+  }
+
+  // ===================== EFECTIVO =====================
 
   onDiscountChange(value: string): void {
     this.discount = this.parseAmount(value);
@@ -288,12 +454,32 @@ export class Ventas implements OnInit {
   processSale(): void {
     if (this.isCartEmpty || this.procesando) return;
 
+    if (this.activePaymentMethod === 'yape') return; // se confirma solo, vía sondeo
+
     if (this.activePaymentMethod === 'efectivo' && this.parseAmount(this.paidAmount) < this.total) {
       alert('El monto pagado es menor al total de la venta.');
       return;
     }
 
+    if (this.activePaymentMethod === 'tarjeta') {
+      this.procesarPagoConTarjeta();
+      return;
+    }
+
+    // Efectivo: no requiere confirmación de un tercero, se procesa directo
     this.procesando = true;
+    this.confirmarVenta();
+  }
+
+  private confirmarVenta(): void {
+    this.procesando = true;
+
+    // Guardamos una copia de lo vendido ANTES de limpiar el carrito, para poder imprimir la boleta
+    const itemsVendidos = this.cart.map((item) => ({ ...item }));
+    const subtotalVenta = this.subtotal;
+    const descuentoVenta = this.discount;
+    const totalVenta = this.total;
+    const metodoVenta = this.activePaymentMethod;
 
     // Arma la venta con sus detalles. El backend se encarga de descontar
     // el stock de cada producto y de dejar el registro guardado para
@@ -308,12 +494,16 @@ export class Ventas implements OnInit {
 
     this.ventaService.crear(nuevaVenta).subscribe({
       next: () => {
-        alert(`Venta procesada por ${this.formatCurrency(this.total)}. ¡Gracias!`);
+        this.imprimirBoleta(itemsVendidos, subtotalVenta, descuentoVenta, totalVenta, metodoVenta);
+
         this.clearCart();
         this.paidAmount = '0.00';
         this.discount = 0;
         this.activePaymentMethod = 'efectivo';
-        this.qrDataUrl = null;
+        this.qrStripeDataUrl = null;
+        this.stripeSessionId = null;
+        this.stripeError = null;
+        this.cardElement?.clear();
         this.procesando = false;
         this.cargarProductos(); // refresca el stock real desde el backend
       },
@@ -323,6 +513,80 @@ export class Ventas implements OnInit {
         this.procesando = false;
       },
     });
+  }
+
+  // ===================== BOLETA (comprobante imprimible) =====================
+
+  private imprimirBoleta(
+    items: CartItem[],
+    subtotal: number,
+    descuento: number,
+    total: number,
+    metodo: PaymentMethod
+  ): void {
+    const metodoLabel =
+      metodo === 'efectivo' ? 'Efectivo' :
+      metodo === 'tarjeta' ? 'Tarjeta' : 'Yape / Plin';
+
+    const numeroBoleta = 'B' + Date.now().toString().slice(-8);
+
+    const filas = items.map((item) => `
+      <tr>
+        <td>${item.product.nombre || '(Sin nombre)'}</td>
+        <td style="text-align:center">${item.qty}</td>
+        <td style="text-align:right">${this.formatCurrency(item.product.precio)}</td>
+        <td style="text-align:right">${this.formatCurrency(item.product.precio * item.qty)}</td>
+      </tr>
+    `).join('');
+
+    const contenido = `
+      <html>
+        <head>
+          <title>Boleta ${numeroBoleta}</title>
+          <style>
+            body { font-family: 'Segoe UI', sans-serif; padding: 30px; color: #1f2430; max-width: 380px; margin: 0 auto; }
+            h1 { color: #c0242a; font-size: 18px; margin-bottom: 0; }
+            h2 { color: #555; font-weight: 400; font-size: 12px; margin-top: 4px; }
+            .datos { font-size: 12px; color: #555; margin-top: 10px; line-height: 1.6; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
+            th { text-align: left; border-bottom: 1px solid #ccc; padding: 6px 4px; font-size: 11px; }
+            td { padding: 6px 4px; border-bottom: 1px dashed #eee; }
+            .totales { margin-top: 14px; font-size: 13px; }
+            .totales div { display: flex; justify-content: space-between; padding: 3px 0; }
+            .total-final { font-weight: 800; font-size: 16px; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 6px; }
+            .footer { text-align: center; margin-top: 24px; font-size: 11px; color: #888; }
+          </style>
+        </head>
+        <body>
+          <h1>ROJAS MARKET</h1>
+          <h2>Boleta de Venta ${numeroBoleta}</h2>
+          <div class="datos">
+            Fecha: ${this.currentDateTime}<br/>
+            Cajero: ${this.nombre}<br/>
+            Método de pago: ${metodoLabel}
+          </div>
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Cant.</th><th>P. Unit.</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>${filas}</tbody>
+          </table>
+          <div class="totales">
+            <div><span>Subtotal</span><span>${this.formatCurrency(subtotal)}</span></div>
+            <div><span>Descuento</span><span>${this.formatCurrency(descuento)}</span></div>
+            <div class="total-final"><span>TOTAL</span><span>${this.formatCurrency(total)}</span></div>
+          </div>
+          <p class="footer">¡Gracias por su compra!</p>
+        </body>
+      </html>`;
+
+    const ventana = window.open('', '_blank', 'width=420,height=700');
+    if (ventana) {
+      ventana.document.write(contenido);
+      ventana.document.close();
+      ventana.focus();
+      ventana.print();
+    }
   }
 
   // ===================== DATE / TIME =====================
