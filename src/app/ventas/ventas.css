@@ -286,6 +286,11 @@
   object-fit: contain;
 }
 
+.product-emoji {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
 .product-name {
   font-size: 13px;
   font-weight: 600;
@@ -415,6 +420,10 @@
   justify-content: center;
   color: var(--gray-500);
   flex-shrink: 0;
+}
+
+.product-cell-emoji {
+  font-size: 18px;
 }
 
 .product-cell-img img {

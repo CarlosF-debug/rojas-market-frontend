@@ -67,7 +67,12 @@
         <input type="text" placeholder="Buscar productos por código, nombre o categoría..." [(ngModel)]="busqueda" />
       </div>
       <div class="topbar-acciones">
-        <button class="btn-notif">🔔</button>
+        <button class="btn-notif">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
         <div class="usuario-topbar">
           <div class="usuario-avatar">{{ nombre.charAt(0) }}</div>
           <div>
@@ -120,6 +125,7 @@
             *ngFor="let product of paginatedProducts"
             (click)="addToCart(product)"
           >
+            <div class="product-emoji">{{ getEmoji(product) }}</div>
             <div class="product-name">{{ product.nombre || '(Sin nombre)' }}</div>
             <div class="product-price">{{ formatCurrency(product.precio) }}</div>
             <div class="stock-badge">Stock: {{ product.stock }}</div>
@@ -171,11 +177,7 @@
                   <div class="product-cell">
                     <div class="product-cell-img">
                       <img *ngIf="getImagen(item.product)" [src]="getImagen(item.product)" [alt]="item.product.nombre" />
-                      <svg *ngIf="!getImagen(item.product)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                        <line x1="12" y1="22.08" x2="12" y2="12"/>
-                      </svg>
+                      <span *ngIf="!getImagen(item.product)" class="product-cell-emoji">{{ getEmoji(item.product) }}</span>
                     </div>
                     <div class="product-cell-name">{{ item.product.nombre || '(Sin nombre)' }}</div>
                   </div>
@@ -279,7 +281,7 @@
           </div>
 
           <!-- TARJETA: formulario de Stripe -->
-          <div class="tarjeta-pago" [hidden]="activePaymentMethod !== 'tarjeta'">
+          <div class="tarjeta-pago" *ngIf="activePaymentMethod === 'tarjeta'">
             <p class="qr-monto">Monto a cobrar: <strong>{{ formatCurrency(total) }}</strong></p>
             <div id="card-element" class="stripe-card-element"></div>
             <p class="stripe-error" *ngIf="stripeError">{{ stripeError }}</p>

@@ -109,6 +109,62 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     return (p as any).imagenUrl;
   }
 
+  // Como los productos vienen de tu base de datos (no tienen un campo "emoji"),
+  // se asigna un ícono aproximado según palabras clave en el nombre.
+  // Si no coincide con nada, se usa 📦 como ícono genérico.
+  private static readonly EMOJI_POR_PALABRA: { palabra: string; emoji: string }[] = [
+    { palabra: 'coca cola', emoji: '🥤' },
+    { palabra: 'inka cola', emoji: '🥤' },
+    { palabra: 'inca kola', emoji: '🥤' },
+    { palabra: 'gaseosa', emoji: '🥤' },
+    { palabra: 'agua', emoji: '💧' },
+    { palabra: 'jugo', emoji: '🧃' },
+    { palabra: 'leche', emoji: '🥛' },
+    { palabra: 'cerveza', emoji: '🍺' },
+    { palabra: 'vino', emoji: '🍷' },
+    { palabra: 'oreo', emoji: '🍪' },
+    { palabra: 'galleta', emoji: '🍪' },
+    { palabra: 'chocolate', emoji: '🍫' },
+    { palabra: 'caramelo', emoji: '🍬' },
+    { palabra: 'halls', emoji: '🍬' },
+    { palabra: 'papas', emoji: '🍟' },
+    { palabra: 'arroz', emoji: '🍚' },
+    { palabra: 'azucar', emoji: '🧂' },
+    { palabra: 'azúcar', emoji: '🧂' },
+    { palabra: 'sal', emoji: '🧂' },
+    { palabra: 'aceite', emoji: '🫙' },
+    { palabra: 'fideo', emoji: '🍝' },
+    { palabra: 'pasta', emoji: '🍝' },
+    { palabra: 'atun', emoji: '🥫' },
+    { palabra: 'atún', emoji: '🥫' },
+    { palabra: 'conserva', emoji: '🥫' },
+    { palabra: 'detergente', emoji: '🧴' },
+    { palabra: 'jabon', emoji: '🧼' },
+    { palabra: 'jabón', emoji: '🧼' },
+    { palabra: 'shampoo', emoji: '🧴' },
+    { palabra: 'pan', emoji: '🍞' },
+    { palabra: 'huevo', emoji: '🥚' },
+    { palabra: 'pollo', emoji: '🍗' },
+    { palabra: 'carne', emoji: '🥩' },
+    { palabra: 'manzana', emoji: '🍎' },
+    { palabra: 'platano', emoji: '🍌' },
+    { palabra: 'plátano', emoji: '🍌' },
+    { palabra: 'mouse', emoji: '🖱️' },
+    { palabra: 'teclado', emoji: '⌨️' },
+    { palabra: 'audifono', emoji: '🎧' },
+    { palabra: 'audífono', emoji: '🎧' },
+    { palabra: 'cargador', emoji: '🔌' },
+    { palabra: 'casino', emoji: '🎰' },
+    { palabra: 'naipe', emoji: '🃏' },
+    { palabra: 'cigarro', emoji: '🚬' },
+  ];
+
+  getEmoji(p: Producto): string {
+    const nombre = (p.nombre || '').toLowerCase();
+    const encontrado = Ventas.EMOJI_POR_PALABRA.find((e) => nombre.includes(e.palabra));
+    return encontrado ? encontrado.emoji : '📦';
+  }
+
   productsPerPage = 12;
   currentPage = 1;
   searchTerm = '';
@@ -251,10 +307,19 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
       this.qrStripeDataUrl = null;
     }
 
+    // Si estábamos en el formulario de tarjeta y el cajero cambia de método, lo desmontamos
+    if (this.activePaymentMethod === 'tarjeta' && method !== 'tarjeta') {
+      this.cardElement?.unmount();
+    }
+
     this.activePaymentMethod = method;
 
     if (method === 'yape') {
       this.generarQRStripe();
+    } else if (method === 'tarjeta') {
+      // Esperamos un tick para que Angular renderice el <div id="card-element">
+      // (con *ngIf) antes de intentar montar el formulario de Stripe ahí.
+      setTimeout(() => this.montarTarjetaStripe(), 0);
     }
   }
 
@@ -285,26 +350,32 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.elements = this.stripe.elements();
-    this.cardElement = this.elements.create('card', {
-      style: {
-        base: {
-          fontSize: '14px',
-          color: '#1f2430',
-          '::placeholder': { color: '#7c8394' },
-        },
-        invalid: { color: '#c0242a' },
-      },
-    });
-
-    this.cardElement.mount('#card-element');
-
-    this.cardElement.on('change', (event) => {
-      this.stripeError = event.error ? event.error.message : null;
-      this.cdr.detectChanges();
-    });
-
     this.stripeListo = true;
     this.cdr.detectChanges();
+  }
+
+  private montarTarjetaStripe(): void {
+    if (!this.elements) return;
+
+    if (!this.cardElement) {
+      this.cardElement = this.elements.create('card', {
+        style: {
+          base: {
+            fontSize: '14px',
+            color: '#1f2430',
+            '::placeholder': { color: '#7c8394' },
+          },
+          invalid: { color: '#c0242a' },
+        },
+      });
+
+      this.cardElement.on('change', (event) => {
+        this.stripeError = event.error ? event.error.message : null;
+        this.cdr.detectChanges();
+      });
+    }
+
+    this.cardElement.mount('#card-element');
   }
 
   private async procesarPagoConTarjeta(): Promise<void> {
@@ -499,11 +570,12 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
         this.clearCart();
         this.paidAmount = '0.00';
         this.discount = 0;
+        this.cardElement?.clear();
+        this.cardElement?.unmount();
         this.activePaymentMethod = 'efectivo';
         this.qrStripeDataUrl = null;
         this.stripeSessionId = null;
         this.stripeError = null;
-        this.cardElement?.clear();
         this.procesando = false;
         this.cargarProductos(); // refresca el stock real desde el backend
       },
@@ -555,6 +627,23 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
             .totales div { display: flex; justify-content: space-between; padding: 3px 0; }
             .total-final { font-weight: 800; font-size: 16px; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 6px; }
             .footer { text-align: center; margin-top: 24px; font-size: 11px; color: #888; }
+            .btn-imprimir {
+              display: block;
+              width: 100%;
+              margin-top: 24px;
+              padding: 12px;
+              background: #c0242a;
+              color: white;
+              border: none;
+              border-radius: 8px;
+              font-size: 13px;
+              font-weight: 600;
+              cursor: pointer;
+              font-family: inherit;
+            }
+            @media print {
+              .btn-imprimir { display: none; }
+            }
           </style>
         </head>
         <body>
@@ -577,6 +666,7 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
             <div class="total-final"><span>TOTAL</span><span>${this.formatCurrency(total)}</span></div>
           </div>
           <p class="footer">¡Gracias por su compra!</p>
+          <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
         </body>
       </html>`;
 
@@ -585,7 +675,6 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
       ventana.document.write(contenido);
       ventana.document.close();
       ventana.focus();
-      ventana.print();
     }
   }
 
