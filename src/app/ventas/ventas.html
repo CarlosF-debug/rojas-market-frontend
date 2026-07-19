@@ -210,6 +210,8 @@
                   type="number"
                   min="0"
                   step="0.01"
+                  appSoloNumeros
+                  [appSoloNumerosDecimal]="true"
                   [ngModel]="discount"
                   (ngModelChange)="onDiscountChange($event.toString())"
                 />
@@ -257,7 +259,14 @@
           <div class="pay-body" *ngIf="activePaymentMethod === 'efectivo'">
             <div class="pay-inputs">
               <label>Pagado con:</label>
-              <input type="text" [ngModel]="paidAmount" (ngModelChange)="paidAmount = $event" />
+              <input
+                type="text"
+                inputmode="decimal"
+                appSoloNumeros
+                [appSoloNumerosDecimal]="true"
+                [ngModel]="paidAmount"
+                (ngModelChange)="paidAmount = $event"
+              />
 
               <label class="vuelto-label">Vuelto:</label>
               <div class="vuelto-value">{{ formatCurrency(vuelto) }}</div>

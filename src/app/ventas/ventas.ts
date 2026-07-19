@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import * as QRCode from 'qrcode';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { ProductoService, Producto } from '../services/producto';
 import { CategoriaService, Categoria } from '../services/categoria';
 import { AuthService } from '../services/auth';
 import { VentaService, Venta } from '../services/venta';
+import { SoloNumerosDirective } from '../directives/solo-numeros.directive';
 
 // ===================== TYPES =====================
 
@@ -24,7 +24,7 @@ type PaymentMethod = 'efectivo' | 'yape' | 'tarjeta';
 @Component({
   selector: 'app-ventas',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive, SoloNumerosDirective],
   templateUrl: './ventas.html',
   styleUrl: './ventas.css',
 })
@@ -37,7 +37,6 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
     private http: HttpClient,
-    private sanitizer: DomSanitizer,
     public router: Router
   ) {}
 
@@ -341,9 +340,7 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
 
   // 🔑 Llave PÚBLICA de Stripe (segura de exponer en el frontend).
   // IMPORTANTE: debe venir de la MISMA cuenta/página que tu llave secreta en el backend.
-  private readonly stripePublicKey = 'pk_test_51Tuaru2Zd3epulFwmqqtOOPIKuEo3doGIfULxARWQDvH8xegUUulB0PPNYEccCi5t0AneSJ3sjN7kuP446jsvk8L00dGfGw7WE';
-
-
+  private readonly stripePublicKey = 'pk_test_TU_LLAVE_PUBLICA_AQUI';
 
   private async initStripe(): Promise<void> {
     this.stripe = await loadStripe(this.stripePublicKey);
@@ -531,9 +528,16 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.activePaymentMethod === 'yape') return; // se confirma solo, vía sondeo
 
-    if (this.activePaymentMethod === 'efectivo' && this.parseAmount(this.paidAmount) < this.total) {
-      alert('El monto pagado es menor al total de la venta.');
-      return;
+    let ventanaBoleta: Window | null = null;
+
+    if (this.activePaymentMethod === 'efectivo') {
+      if (this.parseAmount(this.paidAmount) < this.total) {
+        alert('El monto pagado es menor al total de la venta.');
+        return;
+      }
+      // Abrimos la ventana YA, en el mismo clic (todavía vacía), para que el navegador
+      // no la bloquee. Recién más abajo, cuando el backend confirme la venta, la llenamos.
+      ventanaBoleta = window.open('', '_blank');
     }
 
     if (this.activePaymentMethod === 'tarjeta') {
@@ -543,10 +547,10 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
 
     // Efectivo: no requiere confirmación de un tercero, se procesa directo
     this.procesando = true;
-    this.confirmarVenta();
+    this.confirmarVenta(ventanaBoleta);
   }
 
-  private confirmarVenta(): void {
+  private confirmarVenta(ventanaBoleta: Window | null = null): void {
     this.procesando = true;
 
     // Guardamos una copia de lo vendido ANTES de limpiar el carrito, para poder imprimir la boleta
@@ -569,7 +573,9 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
 
     this.ventaService.crear(nuevaVenta).subscribe({
       next: () => {
-        this.imprimirBoleta(itemsVendidos, subtotalVenta, descuentoVenta, totalVenta, metodoVenta);
+        if (metodoVenta === 'efectivo' && ventanaBoleta) {
+          this.imprimirBoletaEnVentana(ventanaBoleta, itemsVendidos, subtotalVenta, descuentoVenta, totalVenta, metodoVenta);
+        }
 
         this.clearCart();
         this.paidAmount = '0.00';
@@ -584,6 +590,7 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
         this.cargarProductos(); // refresca el stock real desde el backend
       },
       error: (err) => {
+        ventanaBoleta?.close(); // la ventana ya se había abierto vacía; si falla la venta, la cerramos
         const mensaje = err?.error?.message || 'Ocurrió un error al procesar la venta. Verifica el stock disponible e inténtalo de nuevo.';
         alert(mensaje);
         this.procesando = false;
@@ -591,22 +598,17 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ===================== BOLETA (comprobante imprimible, en modal dentro de la página) =====================
+  // ===================== BOLETA (comprobante en otra ventana, solo para Efectivo por ahora) =====================
 
-  boletaVisible = false;
-  boletaHtml: SafeHtml | null = null;
-
-  private imprimirBoleta(
+  private imprimirBoletaEnVentana(
+    ventana: Window,
     items: CartItem[],
     subtotal: number,
     descuento: number,
     total: number,
     metodo: PaymentMethod
   ): void {
-    const metodoLabel =
-      metodo === 'efectivo' ? 'Efectivo' :
-      metodo === 'tarjeta' ? 'Tarjeta' : 'Yape / Plin';
-
+    const metodoLabel = metodo === 'efectivo' ? 'Efectivo' : metodo === 'tarjeta' ? 'Tarjeta' : 'Yape / Plin';
     const numeroBoleta = 'B' + Date.now().toString().slice(-8);
 
     const filas = items.map((item) => `
@@ -619,40 +621,67 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     `).join('');
 
     const contenido = `
-      <div class="boleta-papel">
-        <h1>ROJAS MARKET</h1>
-        <h2>Boleta de Venta ${numeroBoleta}</h2>
-        <div class="boleta-datos">
-          Fecha: ${this.currentDateTime}<br/>
-          Cajero: ${this.nombre}<br/>
-          Método de pago: ${metodoLabel}
-        </div>
-        <table class="boleta-tabla">
-          <thead>
-            <tr><th>Producto</th><th>Cant.</th><th>P. Unit.</th><th>Subtotal</th></tr>
-          </thead>
-          <tbody>${filas}</tbody>
-        </table>
-        <div class="boleta-totales">
-          <div><span>Subtotal</span><span>${this.formatCurrency(subtotal)}</span></div>
-          <div><span>Descuento</span><span>${this.formatCurrency(descuento)}</span></div>
-          <div class="boleta-total-final"><span>TOTAL</span><span>${this.formatCurrency(total)}</span></div>
-        </div>
-        <p class="boleta-footer">¡Gracias por su compra!</p>
-      </div>`;
+      <html>
+        <head>
+          <title>Boleta ${numeroBoleta}</title>
+          <style>
+            body { font-family: 'Segoe UI', sans-serif; padding: 30px; color: #1f2430; max-width: 380px; margin: 0 auto; }
+            h1 { color: #c0242a; font-size: 18px; margin-bottom: 0; }
+            h2 { color: #555; font-weight: 400; font-size: 12px; margin-top: 4px; }
+            .datos { font-size: 12px; color: #555; margin-top: 10px; line-height: 1.6; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
+            th { text-align: left; border-bottom: 1px solid #ccc; padding: 6px 4px; font-size: 11px; }
+            td { padding: 6px 4px; border-bottom: 1px dashed #eee; }
+            .totales { margin-top: 14px; font-size: 13px; }
+            .totales div { display: flex; justify-content: space-between; padding: 3px 0; }
+            .total-final { font-weight: 800; font-size: 16px; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 6px; }
+            .footer { text-align: center; margin-top: 24px; font-size: 11px; color: #888; }
+            .btn-imprimir {
+              display: block;
+              width: 100%;
+              margin-top: 24px;
+              padding: 12px;
+              background: #c0242a;
+              color: white;
+              border: none;
+              border-radius: 8px;
+              font-size: 13px;
+              font-weight: 600;
+              cursor: pointer;
+              font-family: inherit;
+            }
+            @media print {
+              .btn-imprimir { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>ROJAS MARKET</h1>
+          <h2>Boleta de Venta ${numeroBoleta}</h2>
+          <div class="datos">
+            Fecha: ${this.currentDateTime}<br/>
+            Cajero: ${this.nombre}<br/>
+            Método de pago: ${metodoLabel}
+          </div>
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Cant.</th><th>P. Unit.</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>${filas}</tbody>
+          </table>
+          <div class="totales">
+            <div><span>Subtotal</span><span>${this.formatCurrency(subtotal)}</span></div>
+            <div><span>Descuento</span><span>${this.formatCurrency(descuento)}</span></div>
+            <div class="total-final"><span>TOTAL</span><span>${this.formatCurrency(total)}</span></div>
+          </div>
+          <p class="footer">¡Gracias por su compra!</p>
+          <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+        </body>
+      </html>`;
 
-    this.boletaHtml = this.sanitizer.bypassSecurityTrustHtml(contenido);
-    this.boletaVisible = true;
-    this.cdr.detectChanges();
-  }
-
-  imprimirBoletaActual(): void {
-    window.print();
-  }
-
-  cerrarBoleta(): void {
-    this.boletaVisible = false;
-    this.boletaHtml = null;
+    ventana.document.write(contenido);
+    ventana.document.close();
+    ventana.focus();
   }
 
   // ===================== DATE / TIME =====================
