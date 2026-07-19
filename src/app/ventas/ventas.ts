@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import * as QRCode from 'qrcode';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { ProductoService, Producto } from '../services/producto';
@@ -36,6 +37,7 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
     private http: HttpClient,
+    private sanitizer: DomSanitizer,
     public router: Router
   ) {}
 
@@ -341,6 +343,8 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
   // IMPORTANTE: debe venir de la MISMA cuenta/página que tu llave secreta en el backend.
   private readonly stripePublicKey = 'pk_test_51Tuaru2Zd3epulFwmqqtOOPIKuEo3doGIfULxARWQDvH8xegUUulB0PPNYEccCi5t0AneSJ3sjN7kuP446jsvk8L00dGfGw7WE';
 
+
+
   private async initStripe(): Promise<void> {
     this.stripe = await loadStripe(this.stripePublicKey);
     if (!this.stripe) {
@@ -587,7 +591,10 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ===================== BOLETA (comprobante imprimible) =====================
+  // ===================== BOLETA (comprobante imprimible, en modal dentro de la página) =====================
+
+  boletaVisible = false;
+  boletaHtml: SafeHtml | null = null;
 
   private imprimirBoleta(
     items: CartItem[],
@@ -612,70 +619,40 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
     `).join('');
 
     const contenido = `
-      <html>
-        <head>
-          <title>Boleta ${numeroBoleta}</title>
-          <style>
-            body { font-family: 'Segoe UI', sans-serif; padding: 30px; color: #1f2430; max-width: 380px; margin: 0 auto; }
-            h1 { color: #c0242a; font-size: 18px; margin-bottom: 0; }
-            h2 { color: #555; font-weight: 400; font-size: 12px; margin-top: 4px; }
-            .datos { font-size: 12px; color: #555; margin-top: 10px; line-height: 1.6; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
-            th { text-align: left; border-bottom: 1px solid #ccc; padding: 6px 4px; font-size: 11px; }
-            td { padding: 6px 4px; border-bottom: 1px dashed #eee; }
-            .totales { margin-top: 14px; font-size: 13px; }
-            .totales div { display: flex; justify-content: space-between; padding: 3px 0; }
-            .total-final { font-weight: 800; font-size: 16px; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 6px; }
-            .footer { text-align: center; margin-top: 24px; font-size: 11px; color: #888; }
-            .btn-imprimir {
-              display: block;
-              width: 100%;
-              margin-top: 24px;
-              padding: 12px;
-              background: #c0242a;
-              color: white;
-              border: none;
-              border-radius: 8px;
-              font-size: 13px;
-              font-weight: 600;
-              cursor: pointer;
-              font-family: inherit;
-            }
-            @media print {
-              .btn-imprimir { display: none; }
-            }
-          </style>
-        </head>
-        <body>
-          <h1>ROJAS MARKET</h1>
-          <h2>Boleta de Venta ${numeroBoleta}</h2>
-          <div class="datos">
-            Fecha: ${this.currentDateTime}<br/>
-            Cajero: ${this.nombre}<br/>
-            Método de pago: ${metodoLabel}
-          </div>
-          <table>
-            <thead>
-              <tr><th>Producto</th><th>Cant.</th><th>P. Unit.</th><th>Subtotal</th></tr>
-            </thead>
-            <tbody>${filas}</tbody>
-          </table>
-          <div class="totales">
-            <div><span>Subtotal</span><span>${this.formatCurrency(subtotal)}</span></div>
-            <div><span>Descuento</span><span>${this.formatCurrency(descuento)}</span></div>
-            <div class="total-final"><span>TOTAL</span><span>${this.formatCurrency(total)}</span></div>
-          </div>
-          <p class="footer">¡Gracias por su compra!</p>
-          <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
-        </body>
-      </html>`;
+      <div class="boleta-papel">
+        <h1>ROJAS MARKET</h1>
+        <h2>Boleta de Venta ${numeroBoleta}</h2>
+        <div class="boleta-datos">
+          Fecha: ${this.currentDateTime}<br/>
+          Cajero: ${this.nombre}<br/>
+          Método de pago: ${metodoLabel}
+        </div>
+        <table class="boleta-tabla">
+          <thead>
+            <tr><th>Producto</th><th>Cant.</th><th>P. Unit.</th><th>Subtotal</th></tr>
+          </thead>
+          <tbody>${filas}</tbody>
+        </table>
+        <div class="boleta-totales">
+          <div><span>Subtotal</span><span>${this.formatCurrency(subtotal)}</span></div>
+          <div><span>Descuento</span><span>${this.formatCurrency(descuento)}</span></div>
+          <div class="boleta-total-final"><span>TOTAL</span><span>${this.formatCurrency(total)}</span></div>
+        </div>
+        <p class="boleta-footer">¡Gracias por su compra!</p>
+      </div>`;
 
-    const ventana = window.open('', '_blank', 'width=420,height=700');
-    if (ventana) {
-      ventana.document.write(contenido);
-      ventana.document.close();
-      ventana.focus();
-    }
+    this.boletaHtml = this.sanitizer.bypassSecurityTrustHtml(contenido);
+    this.boletaVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  imprimirBoletaActual(): void {
+    window.print();
+  }
+
+  cerrarBoleta(): void {
+    this.boletaVisible = false;
+    this.boletaHtml = null;
   }
 
   // ===================== DATE / TIME =====================
