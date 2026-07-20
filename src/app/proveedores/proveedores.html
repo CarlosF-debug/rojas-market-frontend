@@ -224,10 +224,16 @@
               <option>Kg</option>
               <option>Litros</option>
             </select>
+            <input type="number" [(ngModel)]="item.precioUnitario" placeholder="Precio Unit." class="item-precio" step="0.01" />
             <button class="btn-quitar" (click)="quitarItemSolicitud(i)">🗑️</button>
           </div>
 
           <button class="btn-agregar-item" (click)="agregarItemSolicitud()">+ Agregar producto</button>
+        </div>
+        
+        <div class="total-solicitud">
+          <span>Total estimado del pedido:</span>
+          <strong>S/ {{ totalSolicitudEstimado | number:'1.2-2' }}</strong>
         </div>
 
         <div class="panel-solicitud-footer">

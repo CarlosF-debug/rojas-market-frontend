@@ -19,6 +19,7 @@ export interface ItemSolicitud {
   nombre: string;
   cantidad: number;
   unidad: string;
+  precioUnitario?: number;
 }
 
 export interface SolicitudCompra {

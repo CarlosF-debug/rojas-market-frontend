@@ -141,7 +141,13 @@ export class Proveedores implements OnInit {
   }
 
   agregarItemSolicitud(): void {
-    this.nuevaSolicitud.productos.push({ nombre: '', cantidad: 1, unidad: 'Unidades' });
+    this.nuevaSolicitud.productos.push({ nombre: '', cantidad: 1, unidad: 'Unidades', precioUnitario: 0 });
+  }
+
+  get totalSolicitudEstimado(): number {
+    return this.nuevaSolicitud.productos.reduce(
+      (sum, item) => sum + (item.cantidad || 0) * (item.precioUnitario || 0), 0
+    );
   }
 
   quitarItemSolicitud(index: number): void {
@@ -162,7 +168,7 @@ export class Proveedores implements OnInit {
       proveedorId: 0,
       fechaSolicitud: new Date().toISOString().substring(0, 10),
       observaciones: '',
-      productos: [{ nombre: '', cantidad: 1, unidad: 'Unidades' }]
+      productos: [{ nombre: '', cantidad: 1, unidad: 'Unidades', precioUnitario: 0 }]
     };
   }
 
