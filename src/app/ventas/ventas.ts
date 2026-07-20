@@ -340,7 +340,7 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
 
   // 🔑 Llave PÚBLICA de Stripe (segura de exponer en el frontend).
   // IMPORTANTE: debe venir de la MISMA cuenta/página que tu llave secreta en el backend.
-  private readonly stripePublicKey = 'pk_test_TU_LLAVE_PUBLICA_AQUI';
+  private readonly stripePublicKey = 'pk_test_51Tuaru2Zd3epulFwmqqtOOPIKuEo3doGIfULxARWQDvH8xegUUulB0PPNYEccCi5t0AneSJ3sjN7kuP446jsvk8L00dGfGw7WE';
 
   private async initStripe(): Promise<void> {
     this.stripe = await loadStripe(this.stripePublicKey);
