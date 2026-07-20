@@ -370,7 +370,7 @@ export class Ventas implements OnInit, AfterViewInit, OnDestroy {
         },
       });
 
-      this.cardElement.on('change', (event) => {
+this.cardElement.on('change', (event: any) => {
         this.stripeError = event.error ? event.error.message : null;
         this.cdr.detectChanges();
       });
