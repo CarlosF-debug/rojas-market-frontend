@@ -80,7 +80,7 @@
         <h1>Proveedores</h1>
         <p>Gestiona la información de tus proveedores y su historial de compras.</p>
       </div>
-      <button class="btn-nuevo" *ngIf="pestanaActiva === 'directorio'" (click)="abrirNuevo()">+ Nuevo Proveedor</button>
+      <button class="btn-nuevo" *ngIf="pestanaActiva === 'directorio' && rol !== 'ENCARGADO'" (click)="abrirNuevo()">+ Nuevo Proveedor</button>
     </div>
 
     <!-- Pestañas -->
@@ -130,8 +130,10 @@
               <td>
                 <div class="acciones">
                   <button class="btn-icono" (click)="verProveedor(p)">👁️</button>
-                  <button class="btn-icono" (click)="abrirEditar(p)">✏️</button>
-                  <button class="btn-icono" (click)="eliminarProveedor(p.id!)">🗑️</button>
+                  <ng-container *ngIf="rol !== 'ENCARGADO'">
+                    <button class="btn-icono" (click)="abrirEditar(p)">✏️</button>
+                    <button class="btn-icono" (click)="eliminarProveedor(p.id!)">🗑️</button>
+                  </ng-container>
                 </div>
               </td>
             </tr>

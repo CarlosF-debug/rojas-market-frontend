@@ -165,7 +165,7 @@
   cursor: pointer;
 }
 
-/* --- BLOQUE NUEVO DE FILTROS INSETADO AQUÍ --- */
+/* --- BLOQUE DE FILTROS --- */
 .filtros-wrapper {
   position: relative;
   margin: 0 28px 20px;
@@ -389,6 +389,12 @@ tr:last-child td { border-bottom: none; }
 
 .btn-editar:hover { background: #f0f0f0; }
 .btn-eliminar:hover { background: #ffeaea; }
+
+.texto-solo-lectura {
+  font-size: 11px;
+  color: #bbb;
+  font-style: italic;
+}
 
 .cargando { text-align: center; color: #888; padding: 40px; }
 

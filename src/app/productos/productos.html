@@ -88,7 +88,7 @@
       </div>
       <div class="acciones-top">
         <button class="btn-exportar">↑ Exportar</button>
-        <button class="btn-nuevo" (click)="abrirNuevo()">+ Nuevo Producto</button>
+        <button class="btn-nuevo" *ngIf="rol !== 'ENCARGADO'" (click)="abrirNuevo()">+ Nuevo Producto</button>
       </div>
     </div>
 
@@ -201,8 +201,13 @@
             <td class="precio">S/ {{ p.precio | number:'1.2-2' }}</td>
             <td>
               <div class="acciones">
-                <button class="btn-editar" (click)="abrirEditar(p)">✏️</button>
-                <button class="btn-eliminar" (click)="eliminar(p.id!)">🗑️</button>
+                <ng-container *ngIf="rol !== 'ENCARGADO'; else soloVer">
+                  <button class="btn-editar" (click)="abrirEditar(p)">✏️</button>
+                  <button class="btn-eliminar" (click)="eliminar(p.id!)">🗑️</button>
+                </ng-container>
+                <ng-template #soloVer>
+                  <span class="texto-solo-lectura">Solo lectura</span>
+                </ng-template>
               </div>
             </td>
           </tr>
