@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -27,8 +28,8 @@ export interface ResumenReporteIA {
 @Injectable({ providedIn: 'root' })
 export class ReporteIaService {
 
-  private apiAlertas = 'http://localhost:8080/api/alertas';
-  private apiResumen = 'http://localhost:8080/api/reportes-ia/resumen';
+  private apiAlertas = `${environment.apiUrl}/alertas`;
+  private apiResumen = `${environment.apiUrl}/reportes-ia/resumen`;
 
   constructor(private http: HttpClient) {}
 
@@ -41,6 +42,6 @@ export class ReporteIaService {
   }
 
   descargarExcel(): Observable<Blob> {
-    return this.http.get('http://localhost:8080/api/reportes-ia/excel', { responseType: 'blob' });
+    return this.http.get(`${environment.apiUrl}/reportes-ia/excel`, { responseType: 'blob' });
   }
 }

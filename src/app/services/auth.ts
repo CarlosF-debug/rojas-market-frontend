@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -18,7 +19,7 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private api = 'http://localhost:8080/api/auth';
+  private api = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 
